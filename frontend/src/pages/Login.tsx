@@ -70,11 +70,7 @@ export default function Login() {
           <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: 'var(--ink-2)' }}>
             New here? <Link to="/register" style={{ color: 'var(--accent)', fontWeight: 600 }}>Create an account</Link>
           </p>
-          <div className="glass" style={{ marginTop: 20, padding: 14, fontSize: 12.5, color: 'var(--ink-2)', lineHeight: 1.7 }}>
-            <strong>Demo accounts</strong> (password <code>Password123!</code>):<br />
-            student <code>aftab@szabist.edu.pk</code> · staff <code>staff@meridian.edu</code><br />
-            officer <code>officer@meridian.edu</code> · admin <code>admin@meridian.edu</code>
-          </div>
+          
         </motion.div>
       </div>
     </Page>
