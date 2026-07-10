@@ -49,21 +49,29 @@ export class LlmClient {
     );
   }
 
+ private debug() {
+  console.log("================================");
+  console.log("AI Provider:", process.env.AI_PROVIDER);
+  console.log("AI Model:", process.env.AI_MODEL);
+  console.log("AI Enabled:", this.enabled);
+  console.log("================================");
+}
   /**
    * Send a prompt (optionally with an image) and get raw text back.
    * `system` sets behaviour; `user` carries the task + context.
    */
   async complete(system: string, user: string, image?: LlmImage): Promise<string | null> {
-    if (!this.enabled) return null;
-    try {
+      this.debug();
+    if (!this.enabled) return null;    try {
       const provider = process.env.AI_PROVIDER;
       return provider === 'anthropic'
         ? await this.anthropic(system, user, image)
         : await this.openai(system, user, image);
     } catch (err) {
-      this.logger.warn(`LLM call failed, falling back: ${err.message}`);
-      return null;
-    }
+  const message = err instanceof Error ? err.message : String(err);
+  this.logger.warn(`LLM call failed, falling back: ${message}`);
+  return null;
+}
   }
 
   /** Convenience: complete() then parse the first JSON object in the reply. */
