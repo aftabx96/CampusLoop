@@ -41,8 +41,18 @@ export function TiltCard({
     <motion.div
       ref={ref}
       className={`glass card-hover ${className}`}
-      style={{ ...style, rotateX: srx, rotateY: sry, transformPerspective: 900, transformStyle: 'preserve-3d' }}
-      onClick={onClick}
+style={{
+  ...style,
+  width: '100%',
+  maxWidth: '100%',
+  minWidth: 0,
+  overflow: 'hidden',
+  rotateX: srx,
+  rotateY: sry,
+  transformPerspective: 900,
+  transformStyle: 'preserve-3d',
+}}    
+onClick={onClick}
       onMouseMove={(e) => {
         const rect = ref.current!.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width;
@@ -67,7 +77,16 @@ export function TiltCard({
           background: shineBg,
         }}
       />
-      <div style={{ transform: 'translateZ(24px)' }}>{children}</div>
+      <div style={{
+    transform: 'translateZ(24px)',
+    width: '100%',
+    maxWidth: '100%',
+    minWidth: 0,
+    overflowWrap: 'break-word',
+    wordBreak: 'break-word',
+  }}
+>
+  {children}</div>
     </motion.div>
   );
 }
