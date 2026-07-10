@@ -223,7 +223,7 @@ export function Spinner({ label }: { label?: string }) {
         transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
         style={{ width: 18, height: 18, border: '2.5px solid color-mix(in srgb, var(--accent) 30%, transparent)', borderTopColor: 'var(--accent)', borderRadius: '50%', display: 'inline-block' }}
       />
-      {label && <span style={{ fontSize: 14 }}>{label}</span>}
+      {label && <span style={{ fontSize: 15 }}>{label}</span>}
     </div>
   );
 }
