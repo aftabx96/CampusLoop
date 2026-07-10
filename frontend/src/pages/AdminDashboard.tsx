@@ -77,8 +77,8 @@ export default function AdminDashboard() {
                 ))}
               </div>
 
-              <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', marginBottom: 24 }}>
-                {/* Chart 1: bar — utilisation */}
+              <div className="grid grid-2" style={{ marginBottom: 24 }}>
+                {/* Chart 1: bar - utilisation */}
                 <motion.div variants={fadeUp} className="glass" style={{ padding: 22 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
                     <h3 style={{ fontSize: 16 }}>Utilisation rate (%)</h3>
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
                   </ResponsiveContainer>
                 </motion.div>
 
-                {/* Chart 2: pie — demand split */}
+                {/* Chart 2: pie - demand split */}
                 <motion.div variants={fadeUp} className="glass" style={{ padding: 22 }}>
                   <h3 style={{ fontSize: 16, marginBottom: 14 }}>Most-requested assets</h3>
                   {demand?.mostRequested?.length ? (
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
                   ) : <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: 30, textAlign: 'center' }}>No booking data yet.</p>}
                 </motion.div>
 
-                {/* Chart 3: area — lending volume over time */}
+                {/* Chart 3: area - lending volume over time */}
                 <motion.div variants={fadeUp} className="glass" style={{ padding: 22 }}>
                   <h3 style={{ fontSize: 16, marginBottom: 4 }}>Peer lending volume</h3>
                   <p style={{ fontSize: 12.5, color: 'var(--ink-3)', marginBottom: 12 }}>
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
                   ) : <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: 30, textAlign: 'center' }}>No loans yet.</p>}
                 </motion.div>
 
-                {/* Chart 4: radial — approval turnaround per manager */}
+                {/* Chart 4: radial - approval turnaround per manager */}
                 <motion.div variants={fadeUp} className="glass" style={{ padding: 22 }}>
                   <h3 style={{ fontSize: 16, marginBottom: 14 }}>Approval turnaround (avg hours)</h3>
                   {turnaround.length ? (
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
                       <RadialBarChart data={turnaround.map((t, i) => ({ ...t, avgHours: Math.round(Number(t.avgHours) * 10) / 10, fill: COLORS[i % COLORS.length] }))}
                         innerRadius="24%" outerRadius="95%" startAngle={90} endAngle={-270}>
                         <RadialBar dataKey="avgHours" background={{ fill: 'color-mix(in srgb, var(--ink-3) 12%, transparent)' }} cornerRadius={8} label={{ fill: 'var(--ink)', fontSize: 11, position: 'insideStart' }} />
-                        <Legend formatter={(_, entry: any) => `${entry?.payload?.manager} — ${entry?.payload?.avgHours}h`} wrapperStyle={{ fontSize: 11 }} />
+                        <Legend formatter={(_, entry: any) => `${entry?.payload?.manager} - ${entry?.payload?.avgHours}h`} wrapperStyle={{ fontSize: 11 }} />
                         <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${v} h`, 'Avg turnaround']} />
                       </RadialBarChart>
                     </ResponsiveContainer>
@@ -191,13 +191,13 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <p style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 12 }}>
-                      <Activity size={12} style={{ verticalAlign: -2 }} /> Generated {anomaly.generatedAt ? new Date(anomaly.generatedAt).toLocaleString() : 'recently'} — emailed to faculty admins every Monday 08:00.
+                      <Activity size={12} style={{ verticalAlign: -2 }} /> Generated {anomaly.generatedAt ? new Date(anomaly.generatedAt).toLocaleString() : 'recently'} - emailed to faculty admins every Monday 08:00.
                     </p>
                   </>
                 ) : (
                   <p style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>
                     No weekly report yet. The NestJS cron runs every Monday at 08:00, analysing 8 weeks of booking
-                    data per asset — or run it now for the demo. (Requires an AI API key; degrades gracefully otherwise.)
+                    data per asset - or run it now for the demo. (Requires an AI API key; degrades gracefully otherwise.)
                   </p>
                 )}
               </motion.div>

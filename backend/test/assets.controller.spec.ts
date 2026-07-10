@@ -50,7 +50,7 @@ describe('AssetsController (role guards)', () => {
       .field('kind', 'PHYSICAL_ITEM')
       .expect(201));
 
-  it('forbids staff from transferring assets — admin only (403)', () =>
+  it('forbids staff from transferring assets - admin only (403)', () =>
     request(app.getHttpServer())
       .patch('/assets/a1/transfer')
       .set('Authorization', `Bearer ${tokenFor(Role.STAFF)}`)

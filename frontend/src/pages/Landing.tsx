@@ -8,9 +8,9 @@ import { Logo } from '../components/NavBar';
 import { Page, TiltCard, fadeUp, stagger } from '../components/ui';
 
 const features = [
-  { icon: <Sparkles size={22} />, title: 'AI Smart Search', text: 'Describe what you need in plain language — "something to record audio for my documentary" — and AI finds it, with a rationale and alternatives.' },
+  { icon: <Sparkles size={22} />, title: 'AI Smart Search', text: 'Describe what you need in plain language - "something to record audio for my documentary" - and AI finds it, with a rationale and alternatives.' },
   { icon: <CalendarCheck size={22} />, title: 'Conflict-Free Booking', text: 'Database-level locking makes double-bookings impossible. Approvals arrive instantly over WebSocket.' },
-  { icon: <ScanEye size={22} />, title: 'AI Condition Reports', text: 'Snap a photo at return — AI assesses the condition and pre-fills the inspection report for the lab manager.' },
+  { icon: <ScanEye size={22} />, title: 'AI Condition Reports', text: 'Snap a photo at return - AI assesses the condition and pre-fills the inspection report for the lab manager.' },
   { icon: <HandHeart size={22} />, title: 'Peer Lending', text: 'Lend textbooks, calculators and bikes to fellow students, protected by mutual ratings and reputation.' },
   { icon: <SearchX size={22} />, title: 'Lost & Found AI', text: 'AI matches lost reports with found items so 40% of items no longer go unclaimed.' },
   { icon: <GraduationCap size={22} />, title: 'Study Group Matcher', text: 'AI pairs you with compatible study partners from your modules, schedule and study style.' },
@@ -54,7 +54,7 @@ export default function Landing() {
               </motion.h1>
               <motion.p variants={fadeUp} style={{ color: 'var(--ink-2)', fontSize: 18, maxWidth: 620, margin: '0 auto 32px', lineHeight: 1.65 }}>
                 CampusLoop turns idle lab instruments, study rooms, cameras and bicycles into a trusted internal
-                marketplace — with AI that makes discovery and condition assessment effortless.
+                marketplace - with AI that makes discovery and condition assessment effortless.
               </motion.p>
               <motion.div variants={fadeUp} style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link to="/register" className="btn btn-primary" style={{ minHeight: 52, padding: '0 30px', fontSize: 16 }}>
@@ -132,7 +132,7 @@ export default function Landing() {
           </motion.section>
 
           <footer style={{ textAlign: 'center', color: 'var(--ink-3)', fontSize: 13, padding: '20px 0' }}>
-            CampusLoop — Web Technologies Course Project · <Link to="/about" style={{ color: 'var(--accent)' }}>Team Unemployed Developers</Link>
+            CampusLoop - Web Technologies Course Project · <Link to="/about" style={{ color: 'var(--accent)' }}>Team Unemployed Developers</Link>
           </footer>
         </div>
       </div>

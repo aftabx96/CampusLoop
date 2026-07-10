@@ -26,7 +26,10 @@ export class LlmClient {
     openai: { baseUrl: 'https://api.openai.com/v1', defaultModel: 'gpt-4o' },
     gemini: {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-      defaultModel: 'gemini-2.0-flash',
+      // "-latest" aliases track whichever model Google currently serves on
+      // the free tier - pinned version numbers (2.0-flash, 1.5-flash, …)
+      // regularly get deprecated or quota-zeroed for free-tier keys.
+      defaultModel: 'gemini-flash-lite-latest',
     },
     groq: {
       baseUrl: 'https://api.groq.com/openai/v1',

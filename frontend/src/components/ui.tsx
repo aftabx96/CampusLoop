@@ -14,7 +14,7 @@ export function Aurora() {
   );
 }
 
-/** 3D perspective tilt card — premium hover depth, iOS-like spring. */
+/** 3D perspective tilt card - premium hover depth, iOS-like spring. */
 export function TiltCard({
   children,
   className = '',
@@ -72,7 +72,7 @@ export function TiltCard({
   );
 }
 
-/** Page enter/exit transition wrapper — spatial continuity, spring-based. */
+/** Page enter/exit transition wrapper - spatial continuity, spring-based. */
 export function Page({ children }: { children: ReactNode }) {
   return (
     <motion.div
@@ -186,7 +186,7 @@ export function Toasts() {
 
 export function EmptyState({ icon, title, hint }: { icon: ReactNode; title: string; hint?: string }) {
   return (
-    <div className="glass" style={{ padding: '56px 24px', textAlign: 'center', gridColumn: '1 / -1' }}>
+    <div className="glass" style={{ padding: '56px 24px', textAlign: 'center', flex: '1 1 100%', maxWidth: 'none', width: '100%' }}>
       <div style={{ display: 'inline-flex', padding: 18, borderRadius: '50%', background: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--accent)', marginBottom: 14 }}>
         {icon}
       </div>

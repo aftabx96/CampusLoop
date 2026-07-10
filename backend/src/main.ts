@@ -22,7 +22,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('CampusLoop API')
     .setDescription(
-      'AI-Powered University Resource Sharing Platform — auto-generated API docs',
+      'AI-Powered University Resource Sharing Platform - auto-generated API docs',
     )
     .setVersion('1.0')
     .addBearerAuth()
@@ -31,6 +31,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(parseInt(process.env.PORT || '3000', 10));
-  console.log(`CampusLoop API running on port ${process.env.PORT || 3000} — Swagger at /api`);
+  console.log(`CampusLoop API running on port ${process.env.PORT || 3000} - Swagger at /api`);
 }
 bootstrap();

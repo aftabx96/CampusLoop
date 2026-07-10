@@ -23,13 +23,13 @@ describe('AuthController', () => {
   it('registers with a valid payload (201)', () =>
     request(app.getHttpServer())
       .post('/auth/register')
-      .send({ email: 'new@meridian.edu', password: 'Password123!', fullName: 'New Student' })
+      .send({ email: 'new@szabist.pk', password: 'Password123!', fullName: 'New Student' })
       .expect(201));
 
   it('rejects weak passwords (400)', () =>
     request(app.getHttpServer())
       .post('/auth/register')
-      .send({ email: 'new@meridian.edu', password: 'short', fullName: 'New Student' })
+      .send({ email: 'new@szabist.pk', password: 'short', fullName: 'New Student' })
       .expect(400));
 
   it('rejects invalid email (400)', () =>

@@ -44,7 +44,7 @@ export default function About() {
             </motion.h1>
             <motion.p variants={fadeUp} style={{ color: 'var(--ink-2)', fontSize: 17, maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
               Three students of <strong>SZABIST</strong> who decided that if the job market won't loop us in,
-              we'll build our own loop — CampusLoop.
+              we'll build our own loop - CampusLoop.
             </motion.p>
           </motion.div>
 
@@ -84,11 +84,11 @@ export default function About() {
             <p style={{ color: 'var(--ink-2)', lineHeight: 1.75, maxWidth: 620, margin: '0 auto' }}>
               CampusLoop was built as the course project for <strong>Web Technologies</strong> at SZABIST,
               under the guidance of our instructor <strong>Mustafa Hassan</strong>. It is a full-stack
-              platform — React 18, NestJS, PostgreSQL, WebSockets and an AI proxy — modelling a real
+              platform - React 18, NestJS, PostgreSQL, WebSockets and an AI proxy - modelling a real
               university resource-sharing marketplace for the fictional Meridian University.
             </p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 22 }}>
-              {['React 18', 'TypeScript', 'NestJS', 'PostgreSQL 15', 'Socket.io', 'JWT Auth', 'LLM AI', 'Docker'].map((t) => (
+              {['React 18', 'TypeScript', 'NestJS', 'PostgreSQL (Neon)', 'Socket.io', 'JWT Auth', 'LLM AI'].map((t) => (
                 <span key={t} className="chip"><BookOpen size={12} /> {t}</span>
               ))}
             </div>

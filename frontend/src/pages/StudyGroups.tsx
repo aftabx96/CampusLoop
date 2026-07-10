@@ -61,7 +61,7 @@ export default function StudyGroups() {
   const propose = async (s: Suggestion) => {
     try {
       await api.post('/study/matches/propose', { userId: s.userId, score: s.score, summary: s.summary });
-      toast('success', 'Proposal sent — they will be notified in real time');
+      toast('success', 'Proposal sent - they will be notified in real time');
       loadMatches();
     } catch (err) { toast('error', errMsg(err)); }
   };
@@ -78,7 +78,7 @@ export default function StudyGroups() {
     <Page>
       <div className="page">
         <div className="container" style={{ maxWidth: 880 }}>
-          <span className="chip brand" style={{ marginBottom: 12 }}><Sparkles size={13} /> AI Feature 3 — Study Group Matcher</span>
+          <span className="chip brand" style={{ marginBottom: 12 }}><Sparkles size={13} /> AI Feature 3 - Study Group Matcher</span>
           <h1 className="page-title">Study Groups</h1>
           <p className="page-sub">AI pairs you with compatible study partners. Contact details are exchanged only after both accept.</p>
 
@@ -116,7 +116,7 @@ export default function StudyGroups() {
           {suggestions && !loading && (
             <section style={{ marginBottom: 32 }}>
               <h2 style={{ fontSize: 18, marginBottom: 6 }}>Suggested partners</h2>
-              {!suggestions.aiRanked && <span className="chip warn" style={{ marginBottom: 12 }}>AI unavailable — showing overlap-based matches</span>}
+              {!suggestions.aiRanked && <span className="chip warn" style={{ marginBottom: 12 }}>AI unavailable - showing overlap-based matches</span>}
               {suggestions.matches.length === 0 ? (
                 <EmptyState icon={<GraduationCap size={24} />} title="No compatible students found yet" hint="More matches appear as students create profiles." />
               ) : (

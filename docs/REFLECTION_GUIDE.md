@@ -1,28 +1,28 @@
-# Deliverable 5 — Live Demo Script & Reflection Guide
+# Deliverable 5 - Live Demo Script & Reflection Guide
 
-> ⚠️ **The written reflection (1,500–2,000 words) must be written by the team themselves** —
+> ⚠️ **The written reflection (1,500–2,000 words) must be written by the team themselves** -
 > the course's Academic Integrity policy (spec §8) forbids using AI tools to write it.
 > This file only provides the demo runbook and an outline of the three architectural decisions
 > the team implemented, as raw material for your own writing.
 
-## 15-minute Live Demo — two end-to-end flows
+## 15-minute Live Demo - two end-to-end flows
 
-### Flow 1 — "Book, return, AI-inspect" (≈7 min)
+### Flow 1 - "Book, return, AI-inspect" (≈7 min)
 1. Login as **student** (`aftab@szabist.edu.pk` / `Password123!`).
 2. Discover page → type *"something to record audio for my documentary project"* → AI ranks the
    Zoom H6 with rationale + predicted return date. Show the amber fallback chip by stopping the AI
    key (optional resilience demo).
-3. Open the Sony FX3 (high-value, $3,800) → book a slot → status **pending**.
-4. Second browser: login as **staff** (`staff@meridian.edu`) → Manage → approve.
+3. Open the Sony FX3 (high-value, Rs 1,050,000) → book a slot → status **pending**.
+4. Second browser: login as **staff** (`sara.malik@szabist.pk`) → Manage → approve.
 5. Back in the student window: the **WebSocket toast + bell notification** arrives instantly.
 6. Student → My Bookings → **Return item** with a photo + note → show the AI condition
    pre-fill (rating, damage, action, confidence).
 7. Staff → Manage → Returns awaiting inspection → open the AI report → **confirm/override** →
    asset condition + availability update.
 
-### Flow 2 — "Lost, found, AI-matched" (≈5 min)
+### Flow 2 - "Lost, found, AI-matched" (≈5 min)
 1. Student reports a lost item ("Blue Nike backpack, Library level 2").
-2. Login as **officer** (`officer@meridian.edu`) → real-time "new lost report" toast → log a
+2. Login as **officer** (`officer@szabist.pk`) → real-time "new lost report" toast → log a
    found item with a similar description.
 3. Officer → AI Matches tab → confidence-scored pair → **Confirm match**.
 4. Student receives the "Possible match found!" notification in real time.
@@ -32,7 +32,7 @@ Reserve ≈3 min for the admin analytics dashboard (4 chart types) and the bonus
 
 ## Raw material for the three architectural decisions
 
-1. **Double-booking prevention in two layers** — pessimistic `SELECT … FOR UPDATE` transaction in
+1. **Double-booking prevention in two layers** - pessimistic `SELECT … FOR UPDATE` transaction in
    `BookingsService.create` *plus* a PostgreSQL `EXCLUDE USING gist (assetId WITH =, tstzrange && )`
    constraint. Tradeoff: lock contention on hot assets vs. absolute integrity; why we rejected
    optimistic retries and unique-slot tables.

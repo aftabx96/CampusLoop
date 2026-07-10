@@ -169,13 +169,21 @@ img { max-width: 100%; display: block; }
 .btn-sm { min-height: 36px; padding: 0 16px; font-size: 13px; }
 
 /* ── forms ── */
-.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+/* min-width: 0 overrides the browser default (min-width: auto) that grid/flex
+   items otherwise use — without it, a <select>'s widest option (e.g. "Loanable
+   good") sets an intrinsic floor that refuses to shrink to its 1fr track,
+   pushing the field past its container on narrow screens. */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; min-width: 0; }
 .field label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .field .hint { font-size: 12px; color: var(--ink-3); }
 .field .error { font-size: 12px; color: var(--danger); }
 
 .input {
   min-height: 46px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 10px 16px;
   border-radius: var(--r-sm);
   border: 1px solid var(--glass-border);
@@ -217,10 +225,16 @@ textarea.input { min-height: 90px; padding-top: 12px; resize: vertical; }
 .page-title { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; margin-bottom: 6px; }
 .page-sub { color: var(--ink-2); margin-bottom: 28px; font-size: 15px; }
 
-.grid { display: grid; gap: 20px; }
-.grid-2 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.grid-3 { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-.grid-4 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+/* Flexbox instead of CSS Grid here on purpose: grid's auto-fill/auto-fit
+   tracks are shared across every row, so a partially-filled last row (e.g.
+   6 cards in 4 columns leaves 2 stranded on the left) can't self-center.
+   A wrapping flex row centers each line independently via justify-content,
+   which is exactly what "centered cards" needs. max-width caps growth so
+   a lone item in an otherwise-empty grid doesn't stretch edge to edge. */
+.grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.grid-2 > * { flex: 1 1 300px; max-width: 460px; }
+.grid-3 > * { flex: 1 1 260px; max-width: 380px; }
+.grid-4 > * { flex: 1 1 220px; max-width: 320px; }
 
 /* ── scrollbar ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
