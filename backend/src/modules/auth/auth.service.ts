@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -21,26 +22,33 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const existing = await this.users.findOne({ where: { email: dto.email } });
-    if (existing) throw new ConflictException('Email already registered');
-
-    const department = dto.departmentId
-      ? await this.departments.findOne({ where: { id: dto.departmentId } })
-      : null;
-
-    const user = this.users.create({
-      email: dto.email,
-      passwordHash: await bcrypt.hash(dto.password, 10),
-      fullName: dto.fullName,
-      role: dto.role,
-      department,
-      departmentId: department?.id ?? null,
-      studentNumber: dto.studentNumber,
-    });
-    await this.users.save(user);
-    return this.issueTokens(user);
+  // Allow only SZABIST email addresses
+  if (!dto.email.toLowerCase().endsWith('@szabist.edu.pk')) {
+    throw new BadRequestException(
+      'Only SZABIST email addresses are allowed.',
+    );
   }
 
+  const existing = await this.users.findOne({ where: { email: dto.email } });
+  if (existing) throw new ConflictException('Email already registered');
+
+  const department = dto.departmentId
+    ? await this.departments.findOne({ where: { id: dto.departmentId } })
+    : null;
+
+  const user = this.users.create({
+    email: dto.email,
+    passwordHash: await bcrypt.hash(dto.password, 10),
+    fullName: dto.fullName,
+    role: dto.role,
+    department,
+    departmentId: department?.id ?? null,
+    studentNumber: dto.studentNumber,
+  });
+
+  await this.users.save(user);
+  return this.issueTokens(user);
+}
   async login(dto: LoginDto) {
     const user = await this.users
       .createQueryBuilder('u')
