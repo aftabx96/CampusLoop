@@ -140,7 +140,7 @@ export class LendingService {
       .getMany();
   }
 
-  /** Hourly overdue sweep — escalating notifications (spec 3.4). */
+  /** Hourly overdue sweep - escalating notifications (spec 3.4). */
   @Cron(CronExpression.EVERY_HOUR)
   async escalateOverdue() {
     const overdue = await this.loans.find({
@@ -159,7 +159,7 @@ export class LendingService {
         await this.notifications.notifyUser(
           loan.borrowerId,
           'loan-overdue',
-          `Overdue item — escalation level ${level}`,
+          `Overdue item - escalation level ${level}`,
           `"${loan.listing.title}" is ${daysLate} day(s) overdue. Please return it.`,
           { loanId: loan.id, level },
         );

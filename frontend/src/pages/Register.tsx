@@ -40,7 +40,7 @@ export default function Register() {
         studentNumber: form.studentNumber || undefined,
       });
       setTokens(data.accessToken, data.refreshToken, data.user);
-      toast('success', 'Account created — welcome to CampusLoop!');
+      toast('success', 'Account created - welcome to CampusLoop!');
       navigate('/app');
     } catch (err) {
       setError(errMsg(err));
@@ -62,7 +62,7 @@ export default function Register() {
           <div style={{ textAlign: 'center', marginBottom: 26 }}>
             <Logo size={48} />
             <h1 style={{ fontSize: 25, margin: '12px 0 6px' }}>Join CampusLoop</h1>
-            <p style={{ color: 'var(--ink-2)', fontSize: 14 }}>University SSO simulation — role & department become JWT claims</p>
+            <p style={{ color: 'var(--ink-2)', fontSize: 14 }}>University SSO simulation - role & department become JWT claims</p>
           </div>
 
           <form onSubmit={submit} noValidate>
@@ -72,7 +72,8 @@ export default function Register() {
             </div>
             <div className="field">
               <label htmlFor="remail">University email <span aria-hidden style={{ color: 'var(--danger)' }}>*</span></label>
-              <input id="remail" className="input" type="email" autoComplete="email" required value={form.email} onChange={set('email')} placeholder="you@university.edu" />
+              <input id="remail" className="input" type="email" autoComplete="email" required value={form.email} onChange={set('email')} placeholder="you@szabist.edu.pk" />
+              <span className="hint">Use your SZABIST address, e.g. name@szabist.pk or name@szabist.edu.pk</span>
             </div>
             <div className="field">
               <label htmlFor="rpassword">Password <span aria-hidden style={{ color: 'var(--danger)' }}>*</span></label>
@@ -97,7 +98,7 @@ export default function Register() {
             <div className="field">
               <label htmlFor="dept">Department</label>
               <select id="dept" className="input" value={form.departmentId} onChange={set('departmentId')}>
-                <option value="">— Select department —</option>
+                <option value="">Select department</option>
                 {departments.map((d) => (
                   <option key={d.id} value={d.id}>{d.name} ({d.faculty})</option>
                 ))}

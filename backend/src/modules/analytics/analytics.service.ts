@@ -59,7 +59,7 @@ export class AnalyticsService {
     }));
   }
 
-  /** Most-requested vs least-used assets — reallocation candidates. */
+  /** Most-requested vs least-used assets - reallocation candidates. */
   async demandRanking() {
     const rows = await this.bookings
       .createQueryBuilder('b')
@@ -128,7 +128,7 @@ export class AnalyticsService {
   }
 
   /**
-   * AI Feature 4 (bonus): weekly cron — 8 weeks of booking data per asset
+   * AI Feature 4 (bonus): weekly cron - 8 weeks of booking data per asset
    * analysed by the LLM; report "emailed" to faculty admins (simulated via
    * console log + in-app notification, as no SMTP is available in dev).
    */

@@ -71,7 +71,7 @@ export default function AssetDetail() {
         assetId: id, startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString(), purpose: purpose || undefined,
       });
       toast('success', data.status === 'PENDING'
-        ? 'Booking requested — high-value asset, awaiting manager approval'
+        ? 'Booking requested - high-value asset, awaiting manager approval'
         : 'Booking confirmed!');
       setSelStart(null); setSelEnd(null); setPurpose('');
       loadSlots();
@@ -85,7 +85,7 @@ export default function AssetDetail() {
 
   if (!asset) return <Page><div className="page"><Spinner label="Loading asset…" /></div></Page>;
 
-  const highValue = Number(asset.value) >= 500;
+  const highValue = Number(asset.value) >= 100000;
 
   return (
     <Page>
@@ -109,7 +109,12 @@ export default function AssetDetail() {
                   <span className="chip">{asset.condition.toLowerCase()} condition</span>
                   {highValue && <span className="chip warn"><ShieldAlert size={12} /> approval required</span>}
                 </div>
-                <h1 style={{ fontSize: 26, marginBottom: 10 }}>{asset.name}</h1>
+                <h1 style={{ fontSize: 26, marginBottom: 6 }}>{asset.name}</h1>
+                {Number(asset.value) > 0 && (
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--accent)', marginBottom: 12 }}>
+                    Rs {Number(asset.value).toLocaleString('en-PK')}
+                  </p>
+                )}
                 <p style={{ color: 'var(--ink-2)', lineHeight: 1.7, fontSize: 14.5, marginBottom: 18 }}>{asset.description}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13.5, color: 'var(--ink-2)' }}>
                   <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><MapPin size={14} /> {asset.department?.name} · {asset.department?.faculty}</span>
@@ -127,7 +132,7 @@ export default function AssetDetail() {
             <motion.div initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 240, damping: 26, delay: 0.08 }} className="glass-strong" style={{ padding: 26 }}>
               <h2 style={{ fontSize: 19, marginBottom: 6 }}>Book a time slot</h2>
               <p style={{ color: 'var(--ink-3)', fontSize: 13, marginBottom: 16 }}>
-                Tap a start hour, then an end hour. Booked slots are locked at the database level — no double-bookings, ever.
+                Tap a start hour, then an end hour. Booked slots are locked at the database level - no double-bookings, ever.
               </p>
               <div className="field">
                 <label htmlFor="day">Date</label>
@@ -176,7 +181,7 @@ export default function AssetDetail() {
               </button>
               {highValue && (
                 <p style={{ fontSize: 12.5, color: 'var(--warning)', marginTop: 10, textAlign: 'center' }}>
-                  High-value asset — a manager must approve. You'll be notified instantly.
+                  High-value asset - a manager must approve. You'll be notified instantly.
                 </p>
               )}
             </motion.div>

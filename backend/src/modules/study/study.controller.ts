@@ -27,7 +27,7 @@ export class StudyController {
   }
 
   @Get('matches/suggest')
-  @ApiOperation({ summary: 'AI Feature 3 — ranked compatible study partners' })
+  @ApiOperation({ summary: 'AI Feature 3 - ranked compatible study partners' })
   findMatches(@CurrentUser() user: JwtPayload) {
     return this.study.findMatches(user);
   }
@@ -41,7 +41,7 @@ export class StudyController {
   }
 
   @Patch('matches/:id/respond')
-  @ApiOperation({ summary: 'Accept/decline — both must accept to exchange contacts' })
+  @ApiOperation({ summary: 'Accept/decline - both must accept to exchange contacts' })
   respond(
     @Param('id') id: string,
     @Body('accept') accept: boolean,

@@ -100,7 +100,12 @@ export default function Catalogue() {
                           <span className={`chip ${availChip(a.availability)}`}>{a.availability.toLowerCase()}</span>
                           <span className="chip">{catLabel(a.category)}</span>
                         </div>
-                        <h3 style={{ fontSize: 16.5, marginBottom: 6 }}>{a.name}</h3>
+                        <h3 style={{ fontSize: 16.5, marginBottom: 4 }}>{a.name}</h3>
+                        {Number(a.value) > 0 && (
+                          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: 'var(--accent)', marginBottom: 6 }}>
+                            Rs {Number(a.value).toLocaleString('en-PK')}
+                          </p>
+                        )}
                         <p style={{ color: 'var(--ink-2)', fontSize: 13, lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {a.description}
                         </p>
@@ -177,9 +182,9 @@ function AddAssetModal({ open, onClose, onCreated }: { open: boolean; onClose: (
             </select>
           </div>
           <div className="field">
-            <label>Value (USD)</label>
+            <label>Value (PKR)</label>
             <input className="input" type="number" min="0" value={form.value} onChange={set('value')} />
-            <span className="hint">≥ $500 requires manager approval</span>
+            <span className="hint">Rs 100,000+ requires manager approval</span>
           </div>
           <div className="field">
             <label>Lead time (hours)</label>

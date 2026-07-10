@@ -54,7 +54,7 @@ export class CreateAssetDto {
   @Min(0)
   bookingLeadTimeHours?: number;
 
-  @ApiPropertyOptional({ default: 0, description: 'Value in USD; above threshold requires approval' })
+  @ApiPropertyOptional({ default: 0, description: 'Value in PKR; above threshold requires approval' })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

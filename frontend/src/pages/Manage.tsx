@@ -31,7 +31,7 @@ export default function Manage() {
   const decide = async (b: ManagedBooking, decision: 'APPROVED' | 'DECLINED') => {
     try {
       await api.patch(`/bookings/${b.id}/decision`, { decision });
-      toast('success', `Booking ${decision.toLowerCase()} — student notified via WebSocket`);
+      toast('success', `Booking ${decision.toLowerCase()} - student notified via WebSocket`);
       load();
     } catch (err) { toast('error', errMsg(err)); }
   };
@@ -56,7 +56,7 @@ export default function Manage() {
                     <div style={{ flex: 1, minWidth: 240 }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 4 }}>
                         <strong>{b.asset?.name}</strong>
-                        <span className="chip warn">${Number(b.asset?.value).toFixed(0)} value</span>
+                        <span className="chip warn">Rs {Number(b.asset?.value).toLocaleString('en-PK')} value</span>
                       </div>
                       <p style={{ fontSize: 13, color: 'var(--ink-2)' }}>
                         {b.requester?.fullName} · {new Date(b.startsAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
@@ -130,7 +130,7 @@ function InspectionModal({ booking, onClose, onDone }: { booking: ManagedBooking
     setBusy(true);
     try {
       await api.patch(`/bookings/${booking.id}/inspection`, { condition, recommendedAction: action, notes: notes || undefined });
-      toast('success', 'Inspection saved — asset condition updated');
+      toast('success', 'Inspection saved - asset condition updated');
       onClose(); onDone();
     } catch (err) { toast('error', errMsg(err)); } finally { setBusy(false); }
   };
@@ -154,7 +154,7 @@ function InspectionModal({ booking, onClose, onDone }: { booking: ManagedBooking
         </div>
       ) : (
         <p style={{ fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 16 }}>
-          AI was unavailable for this return — please complete the inspection manually.
+          AI was unavailable for this return - please complete the inspection manually.
         </p>
       )}
       <form onSubmit={submit}>

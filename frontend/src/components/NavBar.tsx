@@ -147,7 +147,7 @@ export function NavBar() {
                       Mark all read
                     </button>
                   </div>
-                  {items.length === 0 && <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: '18px 0', textAlign: 'center' }}>Nothing yet — bookings and matches will appear here in real time.</p>}
+                  {items.length === 0 && <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: '18px 0', textAlign: 'center' }}>Nothing yet - bookings and matches will appear here in real time.</p>}
                   {items.slice(0, 20).map((n) => (
                     <button
                       key={n.id}

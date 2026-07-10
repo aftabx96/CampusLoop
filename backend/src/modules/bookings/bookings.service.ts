@@ -74,7 +74,7 @@ export class BookingsService {
       if (overlap > 0)
         throw new ConflictException('Time slot already booked for this asset');
 
-      const threshold = parseFloat(process.env.HIGH_VALUE_THRESHOLD || '500');
+      const threshold = parseFloat(process.env.HIGH_VALUE_THRESHOLD || '100000');
       const needsApproval = Number(asset.value) >= threshold;
 
       const booking = manager.getRepository(Booking).create({

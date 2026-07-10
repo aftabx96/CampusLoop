@@ -25,6 +25,11 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       username: process.env.DB_USER || 'campusloop',
       password: process.env.DB_PASSWORD || 'campusloop_secret',
       database: process.env.DB_NAME || 'campusloop',
+      // Neon (and most managed Postgres hosts) require SSL; local Docker/Postgres does not.
+      ssl:
+        process.env.PGSSLMODE === 'require' || /neon\.tech$/.test(process.env.DB_HOST || '')
+          ? { rejectUnauthorized: false }
+          : false,
       autoLoadEntities: true,
       synchronize: false,
       migrations: [__dirname + '/migrations/*{.ts,.js}'],

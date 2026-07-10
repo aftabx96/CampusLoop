@@ -22,7 +22,7 @@ export class AiController {
   @Post('smart-search')
   @ApiOperation({
     summary:
-      'AI Feature 1 — natural language asset search with ranked rationale (falls back to keyword search)',
+      'AI Feature 1 - natural language asset search with ranked rationale (falls back to keyword search)',
   })
   smartSearch(@Body() dto: SmartSearchDto) {
     return this.ai.smartSearch(dto.query);
