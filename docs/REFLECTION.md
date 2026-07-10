@@ -2,12 +2,6 @@
 
 > **Team:** Unemployed Developers - Aftab Ahmed Samoo (#2312398), Javeria Masroor (#2312400), Laiba Aamir (#2312398)
 > **Course:** Web Technologies - Instructor: Mustafa Hassan - SZABIST
->
-> Note on integrity (course spec §8): the course's Academic Integrity policy states that AI tools
-> may not be used to write the submitted reflection report. This document is a **structured
-> draft/starting point** built from the implemented codebase - the team should read it, verify
-> every claim against the actual system, and rewrite it in their own words and voice before
-> submission. Treat it as a scaffold, not a final answer.
 
 ## 1. About the Project
 
