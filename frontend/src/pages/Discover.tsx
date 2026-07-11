@@ -51,12 +51,12 @@ export default function Discover() {
       <div className="page">
         <div className="container" style={{ maxWidth: 860 }}>
           <motion.div variants={stagger} initial="hidden" animate="show" style={{ textAlign: 'center', marginBottom: 36 }}>
-            <motion.span variants={fadeUp} className="chip brand"><Sparkles size={13} /> AI Feature 1 — Smart Search</motion.span>
+            <motion.span variants={fadeUp} className="chip brand"><Sparkles size={13} /> AI Feature 1 - Smart Search</motion.span>
             <motion.h1 variants={fadeUp} className="page-title" style={{ margin: '14px 0 8px' }}>
               Hey {user?.fullName.split(' ')[0]}, what do you need?
             </motion.h1>
             <motion.p variants={fadeUp} className="page-sub" style={{ marginBottom: 0 }}>
-              Describe it in your own words — AI finds the right asset across every department.
+              Describe it in your own words - AI finds the right asset across every department.
             </motion.p>
           </motion.div>
 
@@ -99,7 +99,7 @@ export default function Discover() {
                 )}
                 {!result.aiRanked && result.results.length > 0 && (
                   <motion.p variants={fadeUp} className="chip warn" style={{ marginBottom: 18 }}>
-                    AI unavailable — showing keyword results instead
+                    AI unavailable - showing keyword results instead
                   </motion.p>
                 )}
                 {result.results.length === 0 && (

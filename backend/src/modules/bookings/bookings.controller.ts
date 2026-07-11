@@ -68,7 +68,7 @@ export class BookingsController {
 
   @Patch(':id/decision')
   @Roles(Role.STAFF, Role.ADMIN)
-  @ApiOperation({ summary: 'Approve or decline a booking — requester notified via WebSocket' })
+  @ApiOperation({ summary: 'Approve or decline a booking - requester notified via WebSocket' })
   decide(
     @Param('id') id: string,
     @Body() dto: DecideBookingDto,
@@ -80,7 +80,7 @@ export class BookingsController {
   @Post(':id/return')
   @UseInterceptors(FileInterceptor('photo', imageUploadOptions))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Return item with photo — AI pre-fills inspection (Feature 2)' })
+  @ApiOperation({ summary: 'Return item with photo - AI pre-fills inspection (Feature 2)' })
   returnItem(
     @Param('id') id: string,
     @Body() dto: ReturnBookingDto,

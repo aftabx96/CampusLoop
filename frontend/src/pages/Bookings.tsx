@@ -29,7 +29,7 @@ export default function Bookings() {
       <div className="page">
         <div className="container" style={{ maxWidth: 860 }}>
           <h1 className="page-title">My Bookings</h1>
-          <p className="page-sub">Approvals arrive here in real time. Return items with a photo — AI drafts the inspection report.</p>
+          <p className="page-sub">Approvals arrive here in real time. Return items with a photo - AI drafts the inspection report.</p>
 
           {bookings.length === 0 ? (
             <EmptyState icon={<CalendarCheck size={26} />} title="No bookings yet" hint="Find something in the catalogue or ask AI in Discover." />
@@ -102,7 +102,7 @@ function ReturnModal({ booking, onClose, onDone }: { booking: Booking | null; on
         <form onSubmit={submit}>
           <p style={{ fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 16, lineHeight: 1.6 }}>
             Upload a photo and a short note. <strong>AI Feature 2</strong> estimates the condition and pre-fills the
-            inspection report — the lab manager confirms or overrides it.
+            inspection report - the lab manager confirms or overrides it.
           </p>
           <div className="field">
             <label>Photo of returned item</label>
@@ -140,7 +140,7 @@ function ReturnModal({ booking, onClose, onDone }: { booking: Booking | null; on
             </>
           ) : (
             <p style={{ fontSize: 14, color: 'var(--ink-2)', marginBottom: 18, lineHeight: 1.6 }}>
-              AI was unavailable, so no pre-fill was generated — the manager will complete the inspection form manually.
+              AI was unavailable, so no pre-fill was generated - the manager will complete the inspection form manually.
               Your return has been recorded.
             </p>
           )}

@@ -54,7 +54,7 @@ export default function Lending() {
   const markReturned = async (loan: Loan) => {
     try {
       await api.patch(`/lending/loans/${loan.id}/return`);
-      toast('success', 'Marked as returned — you can now rate each other');
+      toast('success', 'Marked as returned - you can now rate each other');
       load();
     } catch (err) { toast('error', errMsg(err)); }
   };
@@ -233,7 +233,7 @@ function RateModal({ loan, onClose, onDone }: { loan: Loan | null; onClose: () =
     setBusy(true);
     try {
       await api.post(`/lending/loans/${loan.id}/rate`, { score, comment });
-      toast('success', 'Rating submitted — reputation updated');
+      toast('success', 'Rating submitted - reputation updated');
       onClose(); onDone();
     } catch (err) { toast('error', errMsg(err)); } finally { setBusy(false); }
   };

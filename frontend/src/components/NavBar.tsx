@@ -99,11 +99,23 @@ export function NavBar() {
           <strong style={{ fontFamily: 'var(--font-display)', fontSize: 17 }}>CampusLoop</strong>
         </NavLink>
 
-        <div style={{ display: 'flex', gap: 2, flex: 1, overflowX: 'auto', scrollbarWidth: 'none' }} className="nav-links">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
+<div
+  style={{
+    display: 'flex',
+    gap: 6,
+    flex: 1,
+    flexWrap: 'nowrap',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    scrollbarWidth: 'none',
+    minWidth: 0,
+  }}
+  className="nav-links"
+>
+{links.map((l) => (
+  <NavLink
+     key={l.to}
+     to={l.to}
               end={l.to === '/app'}
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 7, padding: '9px 14px', borderRadius: 999,
@@ -158,7 +170,7 @@ export function NavBar() {
                       Mark all read
                     </button>
                   </div>
-                  {items.length === 0 && <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: '18px 0', textAlign: 'center' }}>Nothing yet — bookings and matches will appear here in real time.</p>}
+                  {items.length === 0 && <p style={{ color: 'var(--ink-3)', fontSize: 13, padding: '18px 0', textAlign: 'center' }}>Nothing yet - bookings and matches will appear here in real time.</p>}
                   {items.slice(0, 20).map((n) => (
                     <button
                       key={n.id}

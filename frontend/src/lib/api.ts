@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuth } from '../stores/auth';
 
-/** All requests go through the NestJS backend; the AI proxy lives there —
+/** All requests go through the NestJS backend; the AI proxy lives there -
  *  the frontend never holds AI API keys (spec constraint 5.1). */
 export const api = axios.create({ baseURL: '/api-proxy' });
 

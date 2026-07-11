@@ -14,7 +14,7 @@ export function Aurora() {
   );
 }
 
-/** 3D perspective tilt card — premium hover depth, iOS-like spring. */
+/** 3D perspective tilt card - premium hover depth, iOS-like spring. */
 export function TiltCard({
   children,
   className = '',
@@ -41,8 +41,18 @@ export function TiltCard({
     <motion.div
       ref={ref}
       className={`glass card-hover ${className}`}
-      style={{ ...style, rotateX: srx, rotateY: sry, transformPerspective: 900, transformStyle: 'preserve-3d' }}
-      onClick={onClick}
+style={{
+  ...style,
+  width: '100%',
+  maxWidth: '100%',
+  minWidth: 0,
+  overflow: 'hidden',
+  rotateX: srx,
+  rotateY: sry,
+  transformPerspective: 900,
+  transformStyle: 'preserve-3d',
+}}    
+onClick={onClick}
       onMouseMove={(e) => {
         const rect = ref.current!.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width;
@@ -67,12 +77,21 @@ export function TiltCard({
           background: shineBg,
         }}
       />
-      <div style={{ transform: 'translateZ(24px)' }}>{children}</div>
+      <div style={{
+    transform: 'translateZ(24px)',
+    width: '100%',
+    maxWidth: '100%',
+    minWidth: 0,
+    overflowWrap: 'break-word',
+    wordBreak: 'break-word',
+  }}
+>
+  {children}</div>
     </motion.div>
   );
 }
 
-/** Page enter/exit transition wrapper — spatial continuity, spring-based. */
+/** Page enter/exit transition wrapper - spatial continuity, spring-based. */
 export function Page({ children }: { children: ReactNode }) {
   return (
     <motion.div
@@ -186,7 +205,7 @@ export function Toasts() {
 
 export function EmptyState({ icon, title, hint }: { icon: ReactNode; title: string; hint?: string }) {
   return (
-    <div className="glass" style={{ padding: '56px 24px', textAlign: 'center', gridColumn: '1 / -1' }}>
+    <div className="glass" style={{ padding: '56px 24px', textAlign: 'center', flex: '1 1 100%', maxWidth: 'none', width: '100%' }}>
       <div style={{ display: 'inline-flex', padding: 18, borderRadius: '50%', background: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--accent)', marginBottom: 14 }}>
         {icon}
       </div>
@@ -204,7 +223,7 @@ export function Spinner({ label }: { label?: string }) {
         transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
         style={{ width: 18, height: 18, border: '2.5px solid color-mix(in srgb, var(--accent) 30%, transparent)', borderTopColor: 'var(--accent)', borderRadius: '50%', display: 'inline-block' }}
       />
-      {label && <span style={{ fontSize: 14 }}>{label}</span>}
+      {label && <span style={{ fontSize: 15 }}>{label}</span>}
     </div>
   );
 }

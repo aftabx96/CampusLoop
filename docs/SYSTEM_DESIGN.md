@@ -1,10 +1,10 @@
-# CampusLoop — System Design Document (Deliverable 1)
+# CampusLoop - System Design Document (Deliverable 1)
 
-> **Team:** Unemployed Developers — Aftab Ahmed Samoo (#2312398), Javeria Masroor (#2312400), Laiba Aamir (#2312398)
+> **Team:** Unemployed Developers - Aftab Ahmed Samoo (#2312398), Javeria Masroor (#2312400), Laiba Aamir (#2312398)
 > **Course:** Web Technologies · Instructor: Mustafa Hassan · SZABIST
 >
 > ⚠️ Per the course's Academic Integrity policy (spec §8), AI tools may not be used to *write* this
-> document. This file is a **technical draft/skeleton generated from the implemented codebase** —
+> document. This file is a **technical draft/skeleton generated from the implemented codebase** -
 > the team must review, verify and rewrite it in their own words before submission.
 
 ## 1. Entity-Relationship Diagram
@@ -109,22 +109,22 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 
 ```
 App (theme, socket lifecycle, AnimatePresence)
-├── Aurora (ambient background)          — all
-├── NavBar (role-aware links, bell, theme) — all
-├── Toasts                                — all
+├── Aurora (ambient background)          - all
+├── NavBar (role-aware links, bell, theme) - all
+├── Toasts                                - all
 └── Routes
-    ├── / Landing · /about About · /login · /register        — public
+    ├── / Landing · /about About · /login · /register        - public
     └── Protected (redirect → /login)
-        ├── /app        RoleHome → Discover (AI search)      — STUDENT
+        ├── /app        RoleHome → Discover (AI search)      - STUDENT
         ├── /app/catalogue  Catalogue (+AddAssetModal ▸ STAFF/ADMIN)
-        ├── /app/assets/:id AssetDetail (slot calendar)      — all roles
+        ├── /app/assets/:id AssetDetail (slot calendar)      - all roles
         ├── /app/bookings   Bookings (+ReturnModal, AI result)
-        ├── /app/lending    Lending (tabs, Rate/Add modals)  — STUDENT
+        ├── /app/lending    Lending (tabs, Rate/Add modals)  - STUDENT
         ├── /app/lost-found LostFound (AI-matches tab ▸ OFFICER/ADMIN)
-        ├── /app/study      StudyGroups (profile, AI suggest)— STUDENT
-        ├── /app/manage     Manage (approvals + InspectionModal) — STAFF/ADMIN
-        ├── /app/admin      AdminDashboard (4 chart types + anomaly) — ADMIN
-        └── /app/users      UsersAdmin (role editor)         — ADMIN
+        ├── /app/study      StudyGroups (profile, AI suggest)- STUDENT
+        ├── /app/manage     Manage (approvals + InspectionModal) - STAFF/ADMIN
+        ├── /app/admin      AdminDashboard (4 chart types + anomaly) - ADMIN
+        └── /app/users      UsersAdmin (role editor)         - ADMIN
 ```
 
 State: **Zustand** stores (`auth` persisted, `ui` theme/toasts, `notifications` socket) + local
@@ -147,7 +147,7 @@ React UI ──(REST, JWT)──▶ NestJS AI Proxy (AiModule) ──(HTTPS, API
   pre-computed typical booking durations) to bound token usage; images are base64-attached only
   for condition assessment.
 - **Output handling:** first JSON block is parsed; every enum/id is validated against the database
-  before use (LLM cannot invent asset ids — invalid ids are dropped).
+  before use (LLM cannot invent asset ids - invalid ids are dropped).
 - **Fallbacks (graceful degradation):**
   - Smart search → PostgreSQL full-text keyword search, `aiRanked:false` flag shown in UI
   - Condition assessment → no pre-fill; manager fills the form manually

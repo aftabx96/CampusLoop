@@ -37,7 +37,7 @@ export class StudyService {
     return this.profiles.findOne({ where: { userId: user.sub } });
   }
 
-  /** AI Feature 3 — find compatible study partners, then propose matches. */
+  /** AI Feature 3 - find compatible study partners, then propose matches. */
   async findMatches(user: JwtPayload) {
     const me = await this.profiles.findOne({ where: { userId: user.sub } });
     if (!me) throw new BadRequestException('Create your study profile first');
@@ -72,7 +72,7 @@ export class StudyService {
     };
   }
 
-  /** Propose a match — both must accept before contact info is exchanged. */
+  /** Propose a match - both must accept before contact info is exchanged. */
   async propose(otherUserId: string, score: number, summary: string, user: JwtPayload) {
     if (otherUserId === user.sub) throw new BadRequestException('Cannot match with yourself');
     const existing = await this.matches.findOne({
@@ -124,7 +124,7 @@ export class StudyService {
             uid,
             'study-match',
             'Study match confirmed',
-            'You both accepted — contact details are now visible on your matches page.',
+            'You both accepted - contact details are now visible on your matches page.',
             { matchId: match.id },
           );
         }

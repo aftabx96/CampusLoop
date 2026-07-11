@@ -1,4 +1,4 @@
-# CampusLoop — AI Integration Report (Deliverable 4)
+# CampusLoop - AI Integration Report (Deliverable 4)
 
 > **Team:** Unemployed Developers · Web Technologies · Instructor: Mustafa Hassan
 >
@@ -8,7 +8,7 @@
 
 ## 1. Full Prompt Templates
 
-### Feature 1 — Smart Search & Recommendation (`SMART_SEARCH_SYSTEM`)
+### Feature 1 - Smart Search & Recommendation (`SMART_SEARCH_SYSTEM`)
 ```
 You are CampusLoop's asset discovery assistant for a university.
 Students describe what they need in natural language; you match them to real catalogue assets.
@@ -23,7 +23,7 @@ Respond ONLY with JSON:
 User message: `Student request: "<query>"` + compact catalogue JSON
 (id, name, trimmed description, category, tags, availability, typicalBookingDays).
 
-### Feature 2 — Condition Assessment (`CONDITION_SYSTEM`)
+### Feature 2 - Condition Assessment (`CONDITION_SYSTEM`)
 ```
 You are an equipment inspection assistant for a university lab.
 You receive a photo of a returned item, the student's description, and the condition recorded when it was borrowed.
@@ -35,7 +35,7 @@ User message: asset name, condition at borrow, student's note, and the return ph
 base64 image block (Anthropic `image` / OpenAI `image_url`). If no photo is provided the prompt
 explicitly instructs the model to rely on text only and lower its confidence.
 
-### Feature 3 — Study Group Matcher (`STUDY_MATCH_SYSTEM`)
+### Feature 3 - Study Group Matcher (`STUDY_MATCH_SYSTEM`)
 ```
 You are a study-partner matching assistant for a university.
 Given one student's profile and a list of candidate profiles, rank the most compatible candidates.
@@ -55,7 +55,7 @@ Respond ONLY with JSON:
 Return at most 10 pairs with confidence >= 0.5.
 ```
 
-### Feature 4 (bonus) — Utilisation Anomaly Detector (`ANOMALY_SYSTEM`)
+### Feature 4 (bonus) - Utilisation Anomaly Detector (`ANOMALY_SYSTEM`)
 ```
 You are a utilisation analyst for university assets.
 Given 8 weeks of per-asset booking stats, identify:
@@ -72,19 +72,19 @@ Runs from a NestJS `@Cron('0 8 * * MON')` job; the report is delivered to facult
 1. **Server-side narrowing.** The proxy never forwards raw user context. For search, the catalogue
    is capped at 120 assets with descriptions truncated to 160 chars; typical booking duration is
    pre-computed by SQL (`AVG(endsAt - startsAt)`) rather than sending booking history.
-2. **Stateless single-turn calls.** Each feature is one request/response — no chat history is
+2. **Stateless single-turn calls.** Each feature is one request/response - no chat history is
    stored or replayed, which bounds cost and eliminates cross-user context leakage.
 3. **Structured JSON in, JSON out.** Context is serialized as compact JSON; the system prompt pins
    an exact output schema, and the service validates every returned id/enum against the database
    (hallucinated asset ids are silently dropped).
 4. **Images** are only attached for condition assessment, base64-encoded server-side from the
-   uploaded file — the model never receives a URL into our infrastructure.
+   uploaded file - the model never receives a URL into our infrastructure.
 
 ## 3. Fallback / Degradation Behaviour
 
 | Feature | Trigger (any of) | Fallback | UI signal |
 |---|---|---|---|
-| Smart search | no API key, HTTP error, 30s timeout, non-JSON output, zero valid ids | PostgreSQL full-text keyword search | amber chip "AI unavailable — keyword results" |
+| Smart search | no API key, HTTP error, 30s timeout, non-JSON output, zero valid ids | PostgreSQL full-text keyword search | amber chip "AI unavailable - keyword results" |
 | Condition assessment | same | no pre-fill; manager completes form manually | modal explains manual path; Manage page shows "manual inspection" |
 | Study matcher | same | deterministic scoring: 0.3/module overlap + 0.15/slot overlap + 0.2 same style | amber chip "overlap-based matches" |
 | Lost & Found matcher | same | token-overlap heuristic (≥2 shared terms) | amber chip "heuristic text matching" |
@@ -106,7 +106,7 @@ line of defence.
 
 **Iteration A → B (Condition Assessment).**
 *A (initial):* "Look at the photo and rate the condition of the item."
-*Problem observed:* ratings skewed optimistic — visibly scratched items came back "GOOD", and
+*Problem observed:* ratings skewed optimistic - visibly scratched items came back "GOOD", and
 without the borrow-time condition the model had no baseline.
 *B (final):* injected `Condition when borrowed`, added the conservatism rule "if damage is visible,
 do not rate above FAIR", required a `confidence` field (surfaced in the manager UI so low-confidence
@@ -119,10 +119,10 @@ The AI features forward student-generated content (search queries, return photos
 preferences, lost-item descriptions) to a third-party LLM provider, which raises real privacy
 considerations: photos can incidentally capture faces or ID cards, and study profiles reveal
 schedules. We mitigate this by (1) proxying every call through the backend so no student device
-ever talks to the AI vendor and no API key is exposed, (2) sending the minimum context needed —
+ever talks to the AI vendor and no API key is exposed, (2) sending the minimum context needed -
 ids and trimmed text rather than full records, never emails, password hashes or tokens, (3) making
 every AI feature optional-by-architecture: the system is fully functional with `AI_PROVIDER=none`,
-and (4) keeping matches consent-gated — study-partner contact details are only exchanged after
+and (4) keeping matches consent-gated - study-partner contact details are only exchanged after
 both parties accept. A production deployment should add an explicit privacy notice at upload
 points, provider data-retention review (zero-retention API tiers), and redaction of EXIF/location
 metadata from photos before they leave the server.

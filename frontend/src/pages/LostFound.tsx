@@ -41,7 +41,7 @@ export default function LostFound() {
   const confirmMatch = async (p: MatchPair) => {
     try {
       await api.post('/lost-found/matches/confirm', { lostReportId: p.lostReportId, foundItemId: p.foundItemId });
-      toast('success', 'Match confirmed — reporter notified');
+      toast('success', 'Match confirmed - reporter notified');
       load(); loadMatches();
     } catch (err) { toast('error', errMsg(err)); }
   };
@@ -54,7 +54,7 @@ export default function LostFound() {
             <div>
               <h1 className="page-title">Lost & Found</h1>
               <p className="page-sub" style={{ marginBottom: 0 }}>
-                {isOfficer ? 'Log found items and review AI-suggested matches.' : 'Report lost items — AI helps reunite them with you.'}
+                {isOfficer ? 'Log found items and review AI-suggested matches.' : 'Report lost items - AI helps reunite them with you.'}
               </p>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
@@ -127,10 +127,10 @@ export default function LostFound() {
           {tab === 'matches' && isOfficer && (
             matchesLoading ? <Spinner label="AI is comparing lost reports with found items…" /> :
             !matches || matches.pairs.length === 0 ? (
-              <EmptyState icon={<Sparkles size={26} />} title="No plausible matches right now" hint="New reports and found items are compared automatically — check back later." />
+              <EmptyState icon={<Sparkles size={26} />} title="No plausible matches right now" hint="New reports and found items are compared automatically - check back later." />
             ) : (
               <motion.div key="matches" variants={stagger} initial="hidden" animate="show" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {!matches.aiRanked && <motion.span variants={fadeUp} className="chip warn">AI unavailable — heuristic text matching shown</motion.span>}
+                {!matches.aiRanked && <motion.span variants={fadeUp} className="chip warn">AI unavailable - heuristic text matching shown</motion.span>}
                 {matches.pairs.map((p) => (
                   <motion.div key={`${p.lostReportId}-${p.foundItemId}`} variants={fadeUp} className="glass" style={{ padding: 20 }}>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
@@ -180,7 +180,7 @@ function ReportLostModal({ open, onClose, onDone }: { open: boolean; onClose: ()
     if (photo) fd.append('photo', photo);
     try {
       await api.post('/lost-found/lost', fd);
-      toast('success', 'Lost report filed — officers are notified');
+      toast('success', 'Lost report filed - officers are notified');
       onClose(); onDone();
     } catch (err) { toast('error', errMsg(err)); } finally { setBusy(false); }
   };

@@ -54,7 +54,7 @@ export default function Login() {
             <div className="field">
               <label htmlFor="email">University email</label>
               <input id="email" className="input" type="email" autoComplete="email" required
-                placeholder="you@university.edu" value={email} onChange={(e) => setEmail(e.target.value)} />
+                placeholder="you@szabist.edu.pk" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="field">
               <label htmlFor="password">Password</label>

@@ -28,7 +28,7 @@ export interface SmartSearchResult {
 }
 
 /**
- * AI proxy service — the only place in the system that talks to an LLM.
+ * AI proxy service - the only place in the system that talks to an LLM.
  * The React frontend never calls an AI API directly (constraint 5.1).
  * Every feature has a deterministic fallback.
  */
@@ -42,7 +42,7 @@ export class AiService {
     @InjectRepository(Booking) private bookings: Repository<Booking>,
   ) {}
 
-  /** AI Feature 1 — natural-language smart search with ranked rationale. */
+  /** AI Feature 1 - natural-language smart search with ranked rationale. */
   async smartSearch(query: string): Promise<SmartSearchResult> {
     // Compact catalogue context: id, name, description, tags, availability,
     // plus average past booking duration for return-date prediction.
@@ -97,7 +97,7 @@ export class AiService {
     };
   }
 
-  /** AI Feature 2 — visual condition assessment from a return photo. */
+  /** AI Feature 2 - visual condition assessment from a return photo. */
   async assessCondition(input: {
     photoPath?: string;
     description: string;
@@ -129,7 +129,7 @@ export class AiService {
     };
   }
 
-  /** AI Feature 3 — study partner compatibility ranking. */
+  /** AI Feature 3 - study partner compatibility ranking. */
   async matchStudyPartners(
     me: { userId: string; modules: string[]; availableSlots: string[]; studyStyle: string },
     candidates: Array<{ userId: string; fullName: string; modules: string[]; availableSlots: string[]; studyStyle: string }>,
@@ -196,7 +196,7 @@ export class AiService {
     return { aiRanked: false, pairs: pairs.sort((a, b) => b.confidence - a.confidence).slice(0, 10) };
   }
 
-  /** AI Feature 4 (bonus) — utilisation anomaly analysis over 8 weeks. */
+  /** AI Feature 4 (bonus) - utilisation anomaly analysis over 8 weeks. */
   async detectAnomalies(stats: unknown) {
     const ai = await this.llm.completeJson<{
       bottlenecks: Array<{ assetId: string; name: string; recommendation: string }>;
