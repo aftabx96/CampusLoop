@@ -25,10 +25,14 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       username: process.env.DB_USER || 'campusloop',
       password: process.env.DB_PASSWORD || 'campusloop_secret',
       database: process.env.DB_NAME || 'campusloop',
+      ssl: {
+  rejectUnauthorized: false,
+},
       autoLoadEntities: true,
       synchronize: false,
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
       migrationsRun: true,
+      
     }),
     AuthModule,
     UsersModule,

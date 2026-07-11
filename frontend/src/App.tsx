@@ -26,7 +26,8 @@ import UsersAdmin from './pages/UsersAdmin';
 function Protected({ children, roles }: { children: ReactNode; roles?: string[] }) {
   const { user } = useAuth();
   const location = useLocation();
-  if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+if (!user)
+  return <Navigate to="/" replace />;
   if (roles && !roles.includes(user.role)) {
     return <Navigate to={user.role === 'ADMIN' ? '/app/admin' : user.role === 'LOST_FOUND_OFFICER' ? '/app/lost-found' : user.role === 'STAFF' ? '/app/manage' : '/app'} replace />;
   }
@@ -36,13 +37,14 @@ function Protected({ children, roles }: { children: ReactNode; roles?: string[] 
 /** Students land on Discover; other roles on their primary workspace. */
 function RoleHome() {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+
+  if (!user) return <Navigate to="/" replace />;
   if (user.role === 'ADMIN') return <Navigate to="/app/admin" replace />;
   if (user.role === 'STAFF') return <Navigate to="/app/manage" replace />;
   if (user.role === 'LOST_FOUND_OFFICER') return <Navigate to="/app/lost-found" replace />;
+
   return <Discover />;
 }
-
 export default function App() {
   const { theme } = useUi();
   const { user } = useAuth();

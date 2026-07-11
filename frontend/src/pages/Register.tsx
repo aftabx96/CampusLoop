@@ -68,7 +68,7 @@ export default function Register() {
           <form onSubmit={submit} noValidate>
             <div className="field">
               <label htmlFor="fullName">Full name <span aria-hidden style={{ color: 'var(--danger)' }}>*</span></label>
-              <input id="fullName" className="input" required value={form.fullName} onChange={set('fullName')} placeholder="Aftab Ahmed Samoo" />
+              <input id="fullName" className="input" required value={form.fullName} onChange={set('fullName')} placeholder="your name" />
             </div>
             <div className="field">
               <label htmlFor="remail">University email <span aria-hidden style={{ color: 'var(--danger)' }}>*</span></label>
@@ -91,7 +91,7 @@ export default function Register() {
               </div>
               <div className="field">
                 <label htmlFor="studentNumber">Student no.</label>
-                <input id="studentNumber" className="input" value={form.studentNumber} onChange={set('studentNumber')} placeholder="2312398" />
+                <input id="studentNumber" className="input" value={form.studentNumber} onChange={set('studentNumber')} placeholder="2312xxxx" />
               </div>
             </div>
             <div className="field">

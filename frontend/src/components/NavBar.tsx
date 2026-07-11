@@ -1,13 +1,31 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bell, Boxes, CalendarCheck, GraduationCap, HandHeart, PieChart,
-  LayoutDashboard, LogOut, Moon, Search, SearchX, Sun, Users,
+  Bell,
+  Boxes,
+  CalendarCheck,
+  GraduationCap,
+  HandHeart,
+  PieChart,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  Search,
+  SearchX,
+  Sun,
+  Users,
+  MessageCircle,
 } from 'lucide-react';
+import ChatBot from "./Chatbot";
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../stores/auth';
 import { useNotifications } from '../stores/notifications';
 import { useUi } from '../stores/ui';
+
+
+
+
+
 
 const linksByRole: Record<string, Array<{ to: string; label: string; icon: JSX.Element }>> = {
   STUDENT: [
@@ -17,6 +35,9 @@ const linksByRole: Record<string, Array<{ to: string; label: string; icon: JSX.E
     { to: '/app/lending', label: 'Peer Lending', icon: <HandHeart size={16} /> },
     { to: '/app/lost-found', label: 'Lost & Found', icon: <SearchX size={16} /> },
     { to: '/app/study', label: 'Study Groups', icon: <GraduationCap size={16} /> },
+    { to: '/app/chat', label: 'AI Assistant', icon: <MessageCircle size={16} /> },
+   
+   
   ],
   STAFF: [
     { to: '/app/manage', label: 'Manage', icon: <LayoutDashboard size={16} /> },
@@ -44,6 +65,8 @@ export function NavBar() {
   const bellRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const unread = items.filter((n) => !n.read).length;
+  const [chatOpen, setChatOpen] = useState(false);
+  
 
   useEffect(() => {
     if (user) load().catch(() => {});
@@ -64,7 +87,7 @@ export function NavBar() {
       initial={{ y: -70, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 220, damping: 26 }}
-      style={{ position: 'fixed', top: 14, left: 0, right: 0, zIndex: 900, pointerEvents: 'none' }}
+      style={{ position: 'fixed', top: 14, left: 0, right: 0, zIndex: 900, pointerEvents: 'none',overflow: "visible", }}
     >
       <nav
         className="glass-strong container"
@@ -154,7 +177,26 @@ export function NavBar() {
             </AnimatePresence>
           </div>
         )}
+{user?.role === "STUDENT" && (
+  <button
+    className="btn btn-glass btn-sm"
+    onClick={() => setChatOpen(true)}
+    aria-label="AI Chat"
+    style={{
+      borderRadius: "50%",
+      width: 38,
+      height: 38,
+      padding: 0,
+    }}
+  >
+    <MessageCircle size={16} />
+  </button>
+)}
 
+<ChatBot
+  open={chatOpen}
+  onClose={() => setChatOpen(false)}
+/>
         {user ? (
           <button
             className="btn btn-glass btn-sm"

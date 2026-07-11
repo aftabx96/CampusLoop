@@ -215,4 +215,18 @@ export class AiService {
       .getRawMany();
     return new Map(rows.map((r) => [r.assetId, Math.max(1, Math.round(Number(r.days)))]));
   }
+
+
+  async chat(message: string) {
+   const reply = await this.llm.complete(
+      "You are CampusLoop AI assistant. Help students with booking, assets, lost and found, study groups and navigation inside the system.",
+      message
+   );
+
+   return {
+      reply:
+         reply ??
+         "Sorry, AI is currently unavailable."
+   };
+}
 }

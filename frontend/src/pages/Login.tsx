@@ -70,7 +70,6 @@ export default function Login() {
           <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: 'var(--ink-2)' }}>
             New here? <Link to="/register" style={{ color: 'var(--accent)', fontWeight: 600 }}>Create an account</Link>
           </p>
-          
         </motion.div>
       </div>
     </Page>

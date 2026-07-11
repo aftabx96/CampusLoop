@@ -1,15 +1,25 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards';
 import { AiService } from './ai.service';
 
 class SmartSearchDto {
-  @ApiProperty({ example: 'something to record audio for my documentary project' })
+  @ApiProperty({
+    example: 'something to record audio for my documentary project',
+  })
   @IsString()
   @IsNotEmpty()
   query: string;
+}
+
+class ChatDto {
+  @ApiProperty({
+    example: 'How do I book a camera?',
+  })
+  @IsString()
+  @IsNotEmpty()
+  message: string;
 }
 
 @ApiTags('ai')
@@ -26,5 +36,13 @@ export class AiController {
   })
   smartSearch(@Body() dto: SmartSearchDto) {
     return this.ai.smartSearch(dto.query);
+  }
+
+  @Post('chat')
+  @ApiOperation({
+    summary: 'CampusLoop AI Chatbot',
+  })
+  chat(@Body() dto: ChatDto) {
+    return this.ai.chat(dto.message);
   }
 }
