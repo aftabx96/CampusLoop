@@ -15,8 +15,8 @@ export interface Asset {
   attributes?: Record<string, unknown>;
 }
 
-const categories = ['', 'LAB_EQUIPMENT', 'AV_GEAR', 'STUDY_ROOM', 'TEXTBOOK', 'BICYCLE', 'SPORTS', 'OTHER'];
-const catLabel = (c: string) => (c ? c.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase()) : 'All categories');
+export const categories = ['', 'LAB_EQUIPMENT', 'AV_GEAR', 'STUDY_ROOM', 'TEXTBOOK', 'BICYCLE', 'SPORTS', 'OTHER'];
+export const catLabel = (c: string) => (c ? c.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase()) : 'All categories');
 
 export const availChip = (a: string) =>
   a === 'AVAILABLE' ? 'ok' : a === 'MAINTENANCE' ? 'warn' : 'bad';
