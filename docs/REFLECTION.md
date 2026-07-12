@@ -17,9 +17,10 @@ universities face: expensive equipment, rooms and everyday items sit idle in one
 students in another department queue for the same category of resource, and the whole process is
 coordinated by email. CampusLoop replaces that with a single, role-aware web application: a
 searchable catalogue of assets, conflict-safe booking, a peer-to-peer lending marketplace, a lost
-and found desk, a study-partner matcher, and an analytics dashboard for administrators, all backed
-by a NestJS API, a PostgreSQL database and three (plus one bonus) AI features proxied through the
-backend.
+and found desk, a study-partner matcher, an analytics dashboard for administrators, and a help
+chatbot available to logged-in users and anonymous visitors alike, all backed by a NestJS API, a
+PostgreSQL database (hosted on Neon) and three mandatory AI features plus one bonus feature and
+one general-purpose assistant, all proxied through the backend.
 
 The system was designed and implemented end-to-end by the team: database schema and migrations,
 JWT authentication with role-based guards, a WebSocket notification layer, an AI proxy module with
@@ -44,6 +45,11 @@ graceful degradation, and a React frontend with a distinct "liquid glass" visual
   approval turnaround, lending volume) plus a bonus weekly AI utilisation-anomaly report.
 - All three mandatory AI features (smart search, condition assessment, study matching) and the
   bonus anomaly detector, each with a working, honest fallback when AI is unavailable.
+- A help chatbot reachable before and after login, with a role-aware system prompt and a
+  keyword-matched fallback of its own.
+- Admin accounts cannot be self-registered: the public sign-up form only offers Student, Staff and
+  Lost & Found Officer, and the backend independently rejects `role: ADMIN` even if the API is
+  called directly - a deliberate security boundary enforced server-side, not just hidden in the UI.
 - Automated Jest + Supertest tests covering role-guard behaviour on every protected route family.
 - Swagger documentation generated directly from the NestJS controllers.
 
@@ -94,6 +100,18 @@ Three decisions shaped the system more than any others, and are worth reflecting
    failure rather than throw. This took more code than assuming AI is always available, but it
    directly satisfies the spec's mandatory graceful-degradation constraint and meant the whole
    system stayed testable and demoable even before an AI API key was configured.
+4. **Removing `AnimatePresence` from route transitions after finding it caused real navigation
+   failures.** The original design wrapped every page change in a spring-based exit/enter
+   animation (`mode="wait"`), which looks polished but has a hard dependency: the outgoing page
+   must fire an animation-completion callback before the next route mounts. In testing, that
+   callback occasionally never fired (an interrupted spring, a backgrounded tab, React
+   StrictMode's double render), which left the app looking broken - the URL changed but the screen
+   didn't, until the user manually refreshed. We traced this by instrumenting `useLocation()` and
+   confirming the router state *was* updating correctly while the DOM wasn't, then isolated the
+   cause by removing `AnimatePresence` entirely and watching the bug disappear. The lesson: a
+   decorative animation should never sit on the critical path of core functionality like
+   navigation - each page's own entrance animation still runs on mount, so the trade-off (losing
+   the old page's exit fade) was clearly worth navigation that always works.
 
 ## 5. Limitations and Future Work
 
@@ -110,7 +128,9 @@ Three decisions shaped the system more than any others, and are worth reflecting
 ## 6. Conclusion
 
 CampusLoop demonstrates a complete, working answer to the brief: a polymorphic resource-sharing
-platform with real-time booking, peer lending, lost & found, and three AI features that behave
-honestly when AI is and isn't available - all documented, tested, and running against a live
-Postgres database. The team's biggest takeaway was how much of "AI integration" is really about
-disciplined fallback design and tight context management, not just calling an API.
+platform with real-time booking, peer lending, lost & found, a help chatbot, and three-plus-one AI
+features that behave honestly when AI is and isn't available - all documented, tested, and running
+against a live Postgres database. The team's biggest takeaways were how much of "AI integration" is
+really about disciplined fallback design and tight context management rather than just calling an
+API, and how a small, seemingly cosmetic choice (an animation library's transition mode) can
+silently become a functional bug if it's allowed to sit on the critical path.

@@ -1,6 +1,6 @@
-import { AnimatePresence } from 'framer-motion';
 import { ReactNode, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Chatbot } from './components/Chatbot';
 import { NavBar } from './components/NavBar';
 import { Aurora, Toasts } from './components/ui';
 import { useAuth } from './stores/auth';
@@ -62,27 +62,36 @@ export default function App() {
     <>
       <Aurora />
       <NavBar />
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      {/* No AnimatePresence around route transitions on purpose: it wraps
+          each page in an exit animation that must fire a completion callback
+          before the next route mounts. In practice that callback could hang
+          (an interrupted spring, a backgrounded tab, StrictMode's double
+          render), which left navigation visibly stuck - the URL and router
+          state updated correctly but the old page's DOM never changed until
+          a manual refresh. Each page's own entrance animation (see the
+          `Page` wrapper in components/ui.tsx) still runs on mount, so this
+          only trades away the old page's exit fade, not the new page's
+          entrance - a good trade for navigation that always works. */}
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-          <Route path="/app" element={<Protected><RoleHome /></Protected>} />
-          <Route path="/app/catalogue" element={<Protected><Catalogue /></Protected>} />
-          <Route path="/app/assets/:id" element={<Protected><AssetDetail /></Protected>} />
-          <Route path="/app/bookings" element={<Protected><Bookings /></Protected>} />
-          <Route path="/app/lending" element={<Protected roles={['STUDENT']}><Lending /></Protected>} />
-          <Route path="/app/lost-found" element={<Protected><LostFound /></Protected>} />
-          <Route path="/app/study" element={<Protected roles={['STUDENT']}><StudyGroups /></Protected>} />
-          <Route path="/app/manage" element={<Protected roles={['STAFF', 'ADMIN']}><Manage /></Protected>} />
-          <Route path="/app/admin" element={<Protected roles={['ADMIN']}><AdminDashboard /></Protected>} />
-          <Route path="/app/users" element={<Protected roles={['ADMIN']}><UsersAdmin /></Protected>} />
+        <Route path="/app" element={<Protected><RoleHome /></Protected>} />
+        <Route path="/app/catalogue" element={<Protected><Catalogue /></Protected>} />
+        <Route path="/app/assets/:id" element={<Protected><AssetDetail /></Protected>} />
+        <Route path="/app/bookings" element={<Protected><Bookings /></Protected>} />
+        <Route path="/app/lending" element={<Protected roles={['STUDENT']}><Lending /></Protected>} />
+        <Route path="/app/lost-found" element={<Protected><LostFound /></Protected>} />
+        <Route path="/app/study" element={<Protected roles={['STUDENT']}><StudyGroups /></Protected>} />
+        <Route path="/app/manage" element={<Protected roles={['STAFF', 'ADMIN']}><Manage /></Protected>} />
+        <Route path="/app/admin" element={<Protected roles={['ADMIN']}><AdminDashboard /></Protected>} />
+        <Route path="/app/users" element={<Protected roles={['ADMIN']}><UsersAdmin /></Protected>} />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AnimatePresence>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <Chatbot />
       <Toasts />
     </>
   );

@@ -67,6 +67,37 @@ Respond ONLY with JSON:
 Runs from a NestJS `@Cron('0 8 * * MON')` job; the report is delivered to faculty admins
 (simulated email = structured log + admin-room WebSocket push, since dev has no SMTP).
 
+### Help Chatbot (`HELP_CHAT_SYSTEM`)
+```
+You are the help assistant for CampusLoop, a university resource-sharing platform.
+You help the CURRENT VISITOR (whose role and department are given below) understand and use the app - you do
+not look up their live data (bookings, loans, etc.); direct them to the relevant page for that instead.
+
+If the visitor's role is GUEST, they are not logged in yet: answer general "what is this / how does it work"
+questions, and encourage them to register (mention they can pick their role - Student, Staff, Lost & Found
+Officer, or Admin - during sign-up) or sign in to actually use a feature. Don't assume they have an account yet.
+
+Platform features by role:
+- STUDENT: Discover (AI natural-language asset search), Catalogue (browse/search all assets), Bookings (my
+  bookings, return items with a photo for AI condition assessment), Peer Lending (borrow/lend items with fellow
+  students, rated after each loan), Lost & Found (report lost items, browse found items), Study Groups (AI
+  matches compatible study partners; contact details only shared once both accept).
+- STAFF / Lab Manager: Manage (approve/decline high-value bookings, confirm or override AI condition reports on
+  returned items), plus Catalogue, Bookings, Lost & Found.
+- LOST_FOUND_OFFICER: Lost & Found (log found items, review AI-suggested lost/found matches, confirm matches).
+- ADMIN: Analytics dashboard (utilisation, demand, approval turnaround, lending charts, weekly AI anomaly
+  report), Users (change roles), plus everything above.
+
+Other useful facts: bookings above a value threshold need manager approval; assets are priced in PKR; AI
+features fall back to non-AI behaviour automatically if the AI provider is unavailable, so the app always
+works even without AI. Keep answers short (2-4 sentences), friendly, and specific to what the visitor asked -
+point them to the exact page/button when relevant. If asked something unrelated to CampusLoop, politely say
+you can only help with using CampusLoop.
+```
+User message: `Visitor role: <role or GUEST>, department: <faculty>` + the free-text question. Unlike the
+other four features this is a free-text reply (not JSON) - it's the one feature reachable without a JWT
+(an `OptionalJwtAuthGuard` attaches `role: GUEST` when no token is present) so the widget works before login.
+
 ## 2. Context Management Strategy
 
 1. **Server-side narrowing.** The proxy never forwards raw user context. For search, the catalogue
@@ -89,6 +120,7 @@ Runs from a NestJS `@Cron('0 8 * * MON')` job; the report is delivered to facult
 | Study matcher | same | deterministic scoring: 0.3/module overlap + 0.15/slot overlap + 0.2 same style | amber chip "overlap-based matches" |
 | Lost & Found matcher | same | token-overlap heuristic (≥2 shared terms) | amber chip "heuristic text matching" |
 | Anomaly detector | same | weekly run skipped and logged; UI explains | dashboard placeholder text |
+| Help chatbot | same | keyword-matched canned answer from a small topic dictionary (booking, returns, lending, lost & found, study groups, account, pricing, admin) | chip "AI unavailable - general answer" under the bot's reply |
 
 The LLM client returns `null` on **every** failure mode (never throws to callers), so degradation
 is a first-class code path, not an exception handler.

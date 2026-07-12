@@ -206,6 +206,29 @@ export class AiService {
     return ai; // null → cron logs "AI unavailable" and skips the weekly report
   }
 
+  /** In-app help chatbot. Falls back to keyword-matched canned answers if AI is unavailable. */
+  async chat(message: string, role: string, department: string | null): Promise<{ reply: string; aiGenerated: boolean }> {
+    const reply = await this.llm.complete(P.HELP_CHAT_SYSTEM, P.helpChatUser(message, role, department));
+    if (reply) return { reply: reply.trim(), aiGenerated: true };
+    return { reply: this.cannedHelpReply(message), aiGenerated: false };
+  }
+
+  private cannedHelpReply(message: string): string {
+    const m = message.toLowerCase();
+    const topics: Array<[RegExp, string]> = [
+      [/book|reserve|slot|calendar/, 'Go to Catalogue, open an asset, and pick a start and end hour on its booking calendar. High-value assets need manager approval; you\'ll be notified as soon as it\'s decided.'],
+      [/return|condition|inspect/, 'Open My Bookings and use "Return item" on an active booking - upload a photo and a short note and the condition report is pre-filled automatically.'],
+      [/lend|borrow|loan/, 'Peer Lending lets you list your own items or borrow from other students. Both sides rate each other afterwards, which affects lending access.'],
+      [/lost|found/, 'Use Lost & Found to report a lost item or browse items that have been logged - matches get suggested automatically for officers to confirm.'],
+      [/study|partner|group/, 'Save your modules, free time slots and study style on the Study Groups page, then use "Find partners" - a match only exchanges contact details once both people accept.'],
+      [/password|login|account|register|sign/, 'Use the eye icon on the password field to check what you typed. Forgot your details entirely? You\'ll need to register again or ask an admin to check your account.'],
+      [/price|cost|value|pkr|rs\.?\s?\d/, 'Asset values are shown in PKR. Assets above the configured threshold require manager approval before a booking is confirmed.'],
+      [/admin|analytic|dashboard|report/, 'Admins get an Analytics dashboard with utilisation, demand, approval turnaround and lending charts, plus a weekly AI report on bottleneck and idle assets.'],
+    ];
+    for (const [pattern, answer] of topics) if (pattern.test(m)) return answer;
+    return "I can help with booking assets, returning items, peer lending, lost & found, study groups, or your account. Could you tell me a bit more about what you're trying to do?";
+  }
+
   private async avgBookingDays(): Promise<Map<string, number>> {
     const rows = await this.bookings
       .createQueryBuilder('b')

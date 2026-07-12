@@ -3,7 +3,7 @@ import { LogIn } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/NavBar';
-import { Page } from '../components/ui';
+import { Page, PasswordInput } from '../components/ui';
 import { api, errMsg } from '../lib/api';
 import { useAuth } from '../stores/auth';
 import { useUi } from '../stores/ui';
@@ -58,7 +58,7 @@ export default function Login() {
             </div>
             <div className="field">
               <label htmlFor="password">Password</label>
-              <input id="password" className="input" type="password" autoComplete="current-password" required
+              <PasswordInput id="password" autoComplete="current-password" required
                 placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
               {error && <span className="error" role="alert">{error}</span>}
             </div>

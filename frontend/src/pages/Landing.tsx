@@ -20,7 +20,7 @@ const stats = [
   { n: '4,200+', label: 'catalogued assets' },
   { n: '34% → 70%', label: 'target utilisation' },
   { n: '200+/wk', label: 'bookings automated' },
-  { n: '0', label: 'double-bookings' },
+  { n: '100%', label: 'conflict-free booking' },
 ];
 
 export default function Landing() {

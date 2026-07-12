@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Boxes, CalendarPlus, Clock, MapPin, ShieldAlert, Tag } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Boxes, CalendarPlus, Clock, ImageUp, MapPin, ShieldAlert, Tag } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Page, Spinner } from '../components/ui';
 import { api, errMsg } from '../lib/api';
+import { useAuth } from '../stores/auth';
 import { useUi } from '../stores/ui';
 import { Asset, availChip } from './Catalogue';
 
@@ -14,6 +15,7 @@ const HOURS = Array.from({ length: 12 }, (_, i) => i + 8); // 08:00–19:00
 export default function AssetDetail() {
   const { id } = useParams();
   const { toast } = useUi();
+  const { user } = useAuth();
   const [asset, setAsset] = useState<Asset | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [day, setDay] = useState(() => new Date(Date.now() + 86400_000).toISOString().slice(0, 10));
@@ -21,6 +23,9 @@ export default function AssetDetail() {
   const [selEnd, setSelEnd] = useState<number | null>(null);
   const [purpose, setPurpose] = useState('');
   const [busy, setBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const canEditPhoto = user?.role === 'STAFF' || user?.role === 'ADMIN';
 
   useEffect(() => {
     api.get(`/assets/${id}`).then(({ data }) => setAsset(data)).catch((e) => toast('error', errMsg(e)));
@@ -83,6 +88,21 @@ export default function AssetDetail() {
     }
   };
 
+  const uploadPhoto = async (file: File) => {
+    setPhotoBusy(true);
+    const fd = new FormData();
+    fd.append('photo', file);
+    try {
+      const { data } = await api.patch(`/assets/${id}`, fd);
+      setAsset(data);
+      toast('success', 'Product photo updated');
+    } catch (err) {
+      toast('error', errMsg(err));
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
+
   if (!asset) return <Page><div className="page"><Spinner label="Loading asset…" /></div></Page>;
 
   const highValue = Number(asset.value) >= 100000;
@@ -98,10 +118,34 @@ export default function AssetDetail() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginTop: 16 }}>
             {/* left: asset info */}
             <motion.div initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 240, damping: 26 }} className="glass-strong" style={{ overflow: 'hidden' }}>
-              <div style={{ height: 240, background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent-2) 24%, transparent))', display: 'grid', placeItems: 'center' }}>
+              <div style={{ position: 'relative', height: 240, background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent-2) 24%, transparent))', display: 'grid', placeItems: 'center' }}>
                 {asset.photoUrl
                   ? <img src={asset.photoUrl} alt={asset.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <Boxes size={54} color="var(--accent)" style={{ opacity: 0.55 }} />}
+                {canEditPhoto && (
+                  <>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) uploadPhoto(file);
+                        e.target.value = '';
+                      }}
+                    />
+                    <button
+                      className="btn btn-glass btn-sm"
+                      onClick={() => photoInputRef.current?.click()}
+                      disabled={photoBusy}
+                      aria-label="Change product photo"
+                      style={{ position: 'absolute', top: 12, right: 12, gap: 6 }}
+                    >
+                      <ImageUp size={15} /> {photoBusy ? 'Uploading…' : 'Edit photo'}
+                    </button>
+                  </>
+                )}
               </div>
               <div style={{ padding: 26 }}>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>

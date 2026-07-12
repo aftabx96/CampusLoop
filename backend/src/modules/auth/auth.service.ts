@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -7,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
-import { JwtPayload } from '../../common/enums';
+import { JwtPayload, Role } from '../../common/enums';
 import { Department } from '../../entities/department.entity';
 import { User } from '../../entities/user.entity';
 import { LoginDto, RegisterDto } from './dto';
@@ -21,6 +22,13 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
+    // Admin accounts are never self-service: the public registration form
+    // must not be able to mint an admin. New admins can only be created by
+    // an existing admin promoting a user via PATCH /users/:id/role.
+    if (dto.role === Role.ADMIN) {
+      throw new ForbiddenException('Admin accounts cannot be self-registered');
+    }
+
     const existing = await this.users.findOne({ where: { email: dto.email } });
     if (existing) throw new ConflictException('Email already registered');
 

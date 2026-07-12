@@ -35,7 +35,8 @@ copy .env.example .env          # fill in DB_HOST/DB_USER/DB_PASSWORD/DB_NAME fr
 # 3. install, migrate, seed
 npm install
 npm run migration:run           # runs cleanly from scratch against Neon
-npm run seed                    # departments, users, 12 assets, listings, study profiles
+npm run seed                    # 9 departments, 17 users, 24 assets (with photos), 8-week
+                                 # booking history, lending activity, lost & found, study profiles
 
 # 4. run the API
 npm run start:dev               # http://localhost:3000, Swagger at /api
@@ -55,6 +56,11 @@ npm run dev                     # http://localhost:5173 (proxies API + WebSocket
 | Lost & Found Officer | `officer@szabist.pk` |
 | Admin | `admin@szabist.pk` |
 
+> **Admin accounts are never self-registered.** The public registration form only offers Student,
+> Staff and Lost & Found Officer; the backend rejects `role: ADMIN` on `POST /auth/register` with a
+> 403 even if called directly against the API. New admins can only be created by an existing admin
+> promoting a user via `PATCH /users/:id/role`.
+
 ## AI features (all proxied through NestJS - spec constraint 5.1)
 
 1. **Smart Search** - natural-language asset discovery with ranked rationale, alternatives and
@@ -68,6 +74,10 @@ npm run dev                     # http://localhost:5173 (proxies API + WebSocket
 4. **Utilisation Anomaly Detector (bonus)** - Monday 08:00 cron analyses 8 weeks of bookings,
    flags bottlenecks and idle assets, "emails" faculty admins (log + admin WebSocket room), and is
    runnable on demand from the admin dashboard.
+5. **Help Chatbot** - a floating assistant available on every page, including before login, that
+   answers questions about using CampusLoop (booking, lending, lost & found, study groups, etc.).
+   Role-aware when logged in; addresses anonymous visitors as guests and points them to register.
+   Fallback: keyword-matched canned topic answers.
 
 Set `AI_PROVIDER` and `AI_API_KEY` in `backend/.env`. With `none` (or any API failure) every
 feature degrades gracefully - the UI labels non-AI results.
@@ -83,6 +93,16 @@ feature degrades gracefully - the UI labels non-AI results.
 
 Sign up, copy the key into `AI_API_KEY=`, restart the backend - done. `AI_MODEL` is optional
 (sensible per-provider defaults are built in).
+
+## Other platform features
+
+- **PKR pricing** - asset values are shown in PKR (`Rs 1,050,000` style formatting); bookings for
+  assets at or above `HIGH_VALUE_THRESHOLD` (default Rs 100,000) require manager approval.
+- **Product photos** - every seeded asset and lending listing has a real photo; staff/admin can
+  replace an asset's photo any time from its detail page (`PATCH /assets/:id`, multipart).
+- **Password visibility toggle** on Login and Register (shared `PasswordInput` component).
+- **Centered, responsive card grids** - flexbox-based wrapping (not CSS Grid `auto-fill`) so a
+  partially-filled last row of cards centers itself instead of hugging the left edge.
 
 ## Tests & docs
 
@@ -110,6 +130,9 @@ CampusLoop/
 │   ├── src/seed/seed.ts      # demo data
 │   └── test/                 # Jest + Supertest role-guard suites
 ├── frontend/
-│   └── src/                  # Liquid-glass design system, role dashboards, AI UI, charts
+│   └── src/
+│       ├── components/       # NavBar, Chatbot (floating help widget), shared ui.tsx (glass
+│       │                     # primitives, PasswordInput, Modal, Toasts, EmptyState, ...)
+│       └── pages/            # role dashboards, AI UI, charts
 └── docs/                     # deliverable documents
 ```

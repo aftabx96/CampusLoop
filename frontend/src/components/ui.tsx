@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
-import { ReactNode, useRef } from 'react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Info, X } from 'lucide-react';
+import { InputHTMLAttributes, ReactNode, useRef, useState } from 'react';
 import { useUi } from '../stores/ui';
 
 /** Ambient animated aurora background (fixed, behind everything). */
@@ -192,6 +192,35 @@ export function EmptyState({ icon, title, hint }: { icon: ReactNode; title: stri
       </div>
       <h3 style={{ fontSize: 17, marginBottom: 6 }}>{title}</h3>
       {hint && <p style={{ color: 'var(--ink-3)', fontSize: 14 }}>{hint}</p>}
+    </div>
+  );
+}
+
+/** Password field with a show/hide toggle. Accepts the same props as a native input. */
+export function PasswordInput({ id, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        id={id}
+        className="input"
+        type={visible ? 'text' : 'password'}
+        style={{ paddingRight: 44 }}
+        {...props}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        aria-label={visible ? 'Hide password' : 'Show password'}
+        aria-pressed={visible}
+        style={{
+          position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)',
+          width: 34, height: 34, display: 'grid', placeItems: 'center', borderRadius: 10,
+          background: 'transparent', border: 'none', color: 'var(--ink-3)', cursor: 'pointer',
+        }}
+      >
+        {visible ? <EyeOff size={17} /> : <Eye size={17} />}
+      </button>
     </div>
   );
 }

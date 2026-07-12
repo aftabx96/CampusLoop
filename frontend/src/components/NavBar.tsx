@@ -4,7 +4,7 @@ import {
   LayoutDashboard, LogOut, Moon, Search, SearchX, Sun, Users,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../stores/auth';
 import { useNotifications } from '../stores/notifications';
 import { useUi } from '../stores/ui';
@@ -42,7 +42,6 @@ export function NavBar() {
   const { items, load, markRead, markAllRead } = useNotifications();
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const unread = items.filter((n) => !n.read).length;
 
   useEffect(() => {
@@ -158,7 +157,16 @@ export function NavBar() {
         {user ? (
           <button
             className="btn btn-glass btn-sm"
-            onClick={() => { logout(); navigate('/'); }}
+            onClick={() => {
+              logout();
+              // Hard navigation on purpose: a protected route's exit animation
+              // (AnimatePresence mode="wait") stays mounted and reactive during
+              // its own transition, so it notices user becoming null and fires
+              // its own redirect to /login, racing a plain navigate('/') here.
+              // Reloading to '/' sidesteps that race entirely and also cleanly
+              // tears down the WebSocket connection.
+              window.location.href = '/';
+            }}
             aria-label="Log out"
             style={{ gap: 6 }}
           >

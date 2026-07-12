@@ -57,7 +57,7 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 
 | Method | Path | Roles | Purpose |
 |---|---|---|---|
-| POST | /auth/register | public | Register; returns access+refresh pair |
+| POST | /auth/register | public | Register; returns access+refresh pair. `role: ADMIN` is rejected (403) - admins are never self-registered |
 | POST | /auth/login | public | Login |
 | POST | /auth/refresh | public | Rotate token pair |
 | POST | /auth/logout | any | Revoke refresh token |
@@ -98,7 +98,8 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 | POST | /study/matches/propose | any | Propose (WS notify) |
 | PATCH | /study/matches/:id/respond | party | Accept/decline (both-accept gate) |
 | GET | /study/matches | any | My matches (emails hidden until CONFIRMED) |
-| POST | /ai/smart-search | any | AI Feature 1 (proxied) |
+| POST | /ai/smart-search | any (authenticated) | AI Feature 1 (proxied) |
+| POST | /ai/chat | any, incl. anonymous | Help chatbot - optional-JWT guard, role-aware when logged in |
 | GET | /analytics/* | ADMIN | overview, utilisation, demand, turnaround, lending, anomaly-report |
 | GET | /notifications · PATCH :id/read · read-all | any | In-app notifications |
 
@@ -108,24 +109,33 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 ## 3. React Component Tree (role visibility)
 
 ```
-App (theme, socket lifecycle, AnimatePresence)
+App (theme, socket lifecycle)
 ├── Aurora (ambient background)          - all
 ├── NavBar (role-aware links, bell, theme) - all
-├── Toasts                                - all
-└── Routes
-    ├── / Landing · /about About · /login · /register        - public
-    └── Protected (redirect → /login)
-        ├── /app        RoleHome → Discover (AI search)      - STUDENT
-        ├── /app/catalogue  Catalogue (+AddAssetModal ▸ STAFF/ADMIN)
-        ├── /app/assets/:id AssetDetail (slot calendar)      - all roles
-        ├── /app/bookings   Bookings (+ReturnModal, AI result)
-        ├── /app/lending    Lending (tabs, Rate/Add modals)  - STUDENT
-        ├── /app/lost-found LostFound (AI-matches tab ▸ OFFICER/ADMIN)
-        ├── /app/study      StudyGroups (profile, AI suggest)- STUDENT
-        ├── /app/manage     Manage (approvals + InspectionModal) - STAFF/ADMIN
-        ├── /app/admin      AdminDashboard (4 chart types + anomaly) - ADMIN
-        └── /app/users      UsersAdmin (role editor)         - ADMIN
+├── Routes (no AnimatePresence wrapper - see note below)
+│   ├── / Landing · /about About · /login · /register        - public
+│   └── Protected (redirect → /login)
+│       ├── /app        RoleHome → Discover (AI search)      - STUDENT
+│       ├── /app/catalogue  Catalogue (+AddAssetModal ▸ STAFF/ADMIN)
+│       ├── /app/assets/:id AssetDetail (slot calendar, photo edit ▸ STAFF/ADMIN)
+│       ├── /app/bookings   Bookings (+ReturnModal, AI result)
+│       ├── /app/lending    Lending (tabs, Rate/Add modals)  - STUDENT
+│       ├── /app/lost-found LostFound (AI-matches tab ▸ OFFICER/ADMIN)
+│       ├── /app/study      StudyGroups (profile, AI suggest)- STUDENT
+│       ├── /app/manage     Manage (approvals + InspectionModal) - STAFF/ADMIN
+│       ├── /app/admin      AdminDashboard (4 chart types + anomaly) - ADMIN
+│       └── /app/users      UsersAdmin (role editor)         - ADMIN
+├── Chatbot (floating help widget)        - all, including logged out
+└── Toasts                                - all
 ```
+
+**Why route transitions aren't wrapped in `AnimatePresence`:** `mode="wait"` keeps the outgoing
+page mounted (and reactive to hooks) until its exit animation fires a completion callback. In
+practice that callback could hang - an interrupted spring, a backgrounded tab, React StrictMode's
+double render - which left navigation looking broken: the URL and router state updated correctly,
+but the DOM stayed on the old page until a manual refresh. Each page's own entrance animation
+(the `Page` wrapper in `components/ui.tsx`) still plays on mount, so only the old page's exit fade
+was traded away in exchange for navigation that always works.
 
 State: **Zustand** stores (`auth` persisted, `ui` theme/toasts, `notifications` socket) + local
 component state; React Context is provided by the router/theme layer. Axios interceptor performs
@@ -154,4 +164,9 @@ React UI ──(REST, JWT)──▶ NestJS AI Proxy (AiModule) ──(HTTPS, API
   - Study matcher → deterministic module/slot-overlap scoring
   - Lost&Found matcher → token-overlap heuristic
   - Anomaly detector → run skipped, logged; UI explains
+  - Help chatbot → keyword-matched canned topic answers, `aiGenerated:false` flag shown in UI
 - **Security:** API keys only in backend `.env`; frontend has zero AI credentials (constraint 5.1).
+  The chatbot endpoint (`POST /ai/chat`) is reachable by anonymous visitors via an
+  `OptionalJwtAuthGuard` (attaches `req.user` if a valid token is present, otherwise leaves it
+  undefined instead of rejecting) - it never bypasses the proxy boundary, it just makes the
+  boundary optional-auth instead of required-auth for this one endpoint.

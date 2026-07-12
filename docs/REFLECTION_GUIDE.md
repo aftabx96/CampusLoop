@@ -28,9 +28,11 @@
 4. Student receives the "Possible match found!" notification in real time.
 5. Officer marks the item returned → statuses close out.
 
-Reserve ≈3 min for the admin analytics dashboard (4 chart types) and the bonus anomaly scan button.
+Reserve ≈3 min for the admin analytics dashboard (4 chart types), the bonus anomaly scan button,
+and the floating help chatbot (open it logged out on the Landing page first to show it works
+before login, then again logged in to show the role-aware answer).
 
-## Raw material for the three architectural decisions
+## Raw material for the four architectural decisions
 
 1. **Double-booking prevention in two layers** - pessimistic `SELECT … FOR UPDATE` transaction in
    `BookingsService.create` *plus* a PostgreSQL `EXCLUDE USING gist (assetId WITH =, tstzrange && )`
@@ -42,6 +44,13 @@ Reserve ≈3 min for the admin analytics dashboard (4 chart types) and the bonus
 3. **AI as a nullable dependency.** The LLM client returns `null` on every failure and each feature
    ships a deterministic fallback, so "AI down" is a designed state, not an outage. Tradeoff:
    duplicated logic (heuristic + prompt) vs. availability and testability without API keys.
+4. **Dropping `AnimatePresence` from route transitions after it caused real navigation bugs.**
+   `mode="wait"` requires the outgoing page's exit animation to fire a completion callback before
+   the next route mounts; when that callback hung (interrupted spring, backgrounded tab, React
+   StrictMode's double render), the URL updated but the screen didn't until a manual refresh.
+   Tradeoff: losing the old page's exit fade vs. navigation that never silently breaks - traced by
+   confirming `useLocation()` updated correctly while the DOM didn't, then isolating the cause by
+   removing `AnimatePresence` and watching the bug disappear.
 
 "What we would change": queue booking-approval emails, S3-style object storage for photos,
 refresh-token rotation with device binding, splitting the analytics module into materialized views.

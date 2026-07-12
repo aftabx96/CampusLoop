@@ -3,17 +3,26 @@ import { UserPlus } from 'lucide-react';
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/NavBar';
-import { Page } from '../components/ui';
+import { Page, PasswordInput } from '../components/ui';
 import { api, errMsg } from '../lib/api';
 import { useAuth } from '../stores/auth';
 import { useUi } from '../stores/ui';
 
 interface Dept { id: string; name: string; faculty: string }
 
+/** ID field label/placeholder adapts to the selected role - only students
+ *  have a "student number" in the strict sense, but every role benefits
+ *  from an optional identifying number. */
+const idFieldByRole: Record<string, { label: string; placeholder: string }> = {
+  STUDENT: { label: 'Student ID', placeholder: '2312398' },
+  STAFF: { label: 'Staff ID', placeholder: 'STF-1042' },
+  LOST_FOUND_OFFICER: { label: 'Officer ID', placeholder: 'OFC-118' },
+};
+
 export default function Register() {
   const [form, setForm] = useState({
     fullName: '', email: '', password: '', role: 'STUDENT',
-    departmentId: '', studentNumber: '',
+    departmentId: '', idNumber: '',
   });
   const [departments, setDepartments] = useState<Dept[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,9 +44,12 @@ export default function Register() {
     setError('');
     try {
       const { data } = await api.post('/auth/register', {
-        ...form,
+        fullName: form.fullName,
+        email: form.email,
+        password: form.password,
+        role: form.role,
         departmentId: form.departmentId || undefined,
-        studentNumber: form.studentNumber || undefined,
+        studentNumber: form.idNumber || undefined,
       });
       setTokens(data.accessToken, data.refreshToken, data.user);
       toast('success', 'Account created - welcome to CampusLoop!');
@@ -77,7 +89,7 @@ export default function Register() {
             </div>
             <div className="field">
               <label htmlFor="rpassword">Password <span aria-hidden style={{ color: 'var(--danger)' }}>*</span></label>
-              <input id="rpassword" className="input" type="password" autoComplete="new-password" required value={form.password} onChange={set('password')} placeholder="Min. 8 characters" />
+              <PasswordInput id="rpassword" autoComplete="new-password" required value={form.password} onChange={set('password')} placeholder="Min. 8 characters" />
               <span className="hint">At least 8 characters</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -87,12 +99,11 @@ export default function Register() {
                   <option value="STUDENT">Student</option>
                   <option value="STAFF">Staff / Lab Manager</option>
                   <option value="LOST_FOUND_OFFICER">Lost & Found Officer</option>
-                  <option value="ADMIN">Admin</option>
                 </select>
               </div>
               <div className="field">
-                <label htmlFor="studentNumber">Student no.</label>
-                <input id="studentNumber" className="input" value={form.studentNumber} onChange={set('studentNumber')} placeholder="2312398" />
+                <label htmlFor="idNumber">{idFieldByRole[form.role].label} <span style={{ color: 'var(--ink-3)', fontWeight: 400 }}>(optional)</span></label>
+                <input id="idNumber" className="input" value={form.idNumber} onChange={set('idNumber')} placeholder={idFieldByRole[form.role].placeholder} />
               </div>
             </div>
             <div className="field">
