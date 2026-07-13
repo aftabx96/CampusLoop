@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { BookOpen, Code2, GraduationCap, Heart, Palette, Server } from 'lucide-react';
 import { Page, TiltCard, fadeUp, stagger } from '../components/ui';
-
+import aftabImg from "../assetes/teams/aftab.jpeg";
+import javeriaImg from "../assetes/teams/javeria.png";
+import laibaImg from "../assetes/teams/laiba.png";
 const team = [
   {
     name: 'Aftab Ahmed Samoo',
@@ -10,6 +12,7 @@ const team = [
     icon: <Server size={26} />,
     grad: 'linear-gradient(135deg, #3d6ef7, #22b8cf)',
     initials: 'AS',
+    image: aftabImg,
   },
   {
     name: 'Javeria Masroor',
@@ -18,6 +21,7 @@ const team = [
     icon: <Palette size={26} />,
     grad: 'linear-gradient(135deg, #7c5cfc, #e561b8)',
     initials: 'JM',
+    image: javeriaImg,
   },
   {
     name: 'Laiba Aamir',
@@ -26,6 +30,7 @@ const team = [
     icon: <Code2 size={26} />,
     grad: 'linear-gradient(135deg, #22b8cf, #2f9e6e)',
     initials: 'LA',
+    image: laibaImg,
   },
 ];
 
@@ -49,30 +54,57 @@ export default function About() {
           </motion.div>
 
           <motion.div variants={stagger} initial="hidden" animate="show" className="grid grid-3" style={{ marginBottom: 56 }}>
-            {team.map((m, i) => (
-              <motion.div key={m.name} variants={fadeUp}>
-                <TiltCard style={{ padding: 30, textAlign: 'center', height: '100%' }}>
-                  <motion.div
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 4 + i, ease: 'easeInOut', delay: i * 0.4 }}
-                    style={{
-                      width: 92, height: 92, borderRadius: '32%', margin: '0 auto 18px',
-                      background: m.grad, display: 'grid', placeItems: 'center', color: '#fff',
-                      fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
-                      boxShadow: '0 16px 36px rgba(23,35,76,0.25), inset 0 2px 0 rgba(255,255,255,0.35)',
-                    }}
-                  >
-                    {m.initials}
-                  </motion.div>
-                  <h3 style={{ fontSize: 19, marginBottom: 4 }}>{m.name}</h3>
-                  <div className="chip brand" style={{ marginBottom: 10 }}>{m.id}</div>
-                  <p style={{ color: 'var(--ink-2)', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    {m.icon} {m.role}
-                  </p>
-                </TiltCard>
-              </motion.div>
-            ))}
-          </motion.div>
+  {team.map((m, i) => (
+    <motion.div key={m.name} variants={fadeUp}>
+      <TiltCard style={{ padding: 30, textAlign: 'center', height: '100%' }}>
+
+        <motion.img
+          src={m.image}
+          alt={m.name}
+          animate={{ y: [0, -6, 0] }}
+          transition={{
+            repeat: Infinity,
+            duration: 4 + i,
+            ease: 'easeInOut',
+            delay: i * 0.4,
+          }}
+          style={{
+            width: 110,
+            height: 110,
+            borderRadius: '50%',
+            objectFit: 'cover',
+            margin: '0 auto 18px',
+            display: 'block',
+            border: '4px solid white',
+            boxShadow: '0 12px 30px rgba(0,0,0,.2)',
+          }}
+        />
+
+        <h3 style={{ fontSize: 19, marginBottom: 4 }}>
+          {m.name}
+        </h3>
+
+        <div className="chip brand" style={{ marginBottom: 10 }}>
+          {m.id}
+        </div>
+
+        <p
+          style={{
+            color: 'var(--ink-2)',
+            fontSize: 14,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+          }}
+        >
+          {m.icon} {m.role}
+        </p>
+
+      </TiltCard>
+    </motion.div>
+  ))}
+</motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
