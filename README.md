@@ -35,7 +35,7 @@ copy .env.example .env          # fill in DB_HOST/DB_USER/DB_PASSWORD/DB_NAME fr
 # 3. install, migrate, seed
 npm install
 npm run migration:run           # runs cleanly from scratch against Neon
-npm run seed                    # 9 departments, 17 users, 24 assets (with photos), 8-week
+npm run seed                    # 9 departments, 17 users, 31 assets (with photos), 8-week
                                  # booking history, lending activity, lost & found, study profiles
 
 # 4. run the API
