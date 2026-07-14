@@ -13,6 +13,7 @@ import { StudyModule } from './modules/study/study.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AiModule } from './modules/ai/ai.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CommunityModule } from './modules/community/community.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AnalyticsModule,
     AiModule,
     NotificationsModule,
+    CommunityModule,
   ],
 })
 export class AppModule {}

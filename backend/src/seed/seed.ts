@@ -15,6 +15,7 @@ import { Booking } from '../entities/booking.entity';
 import { LendingListing, LoanRating, LoanRequest } from '../entities/lending.entity';
 import { FoundItem, LostReport } from '../entities/lostfound.entity';
 import { StudyProfile } from '../entities/study.entity';
+import { CommunityPost, PostComment, PostLike } from '../entities/community.entity';
 import {
   AssetCategory,
   AssetCondition,
@@ -247,8 +248,57 @@ async function main() {
     em.create(StudyProfile, { userId: students[11].id, modules: ['CS310 Web Technologies', 'CS301 Algorithms'], availableSlots: ['WED 10:00-12:00', 'MON 14:00-16:00'], studyStyle: StudyStyle.DISCUSSION }),
   ]);
 
+  // ── community feed (posts, staff announcement, comments, likes) ──
+  const posts = await em.save(CommunityPost, [
+    em.create(CommunityPost, {
+      authorId: staff[0].id, isAnnouncement: true, pinned: true,
+      content: 'Reminder: The campus library will stay open 24/7 during midterm week (14 to 21 July). Extra study rooms on Level 2 and 3 have been unlocked. Please carry your student ID at all times. Best of luck with your exams.',
+    }),
+    em.create(CommunityPost, {
+      authorId: students[0].id,
+      content: 'Anyone from CS have the CLRS textbook I can borrow this weekend? Midterm prep grind starts now. Study room L2-04 is free tonight if anyone wants to join.',
+    }),
+    em.create(CommunityPost, {
+      authorId: students[6].id,
+      content: 'Selling my old scientific calculator (Casio FX-991EX), works perfectly. Message me if interested, giving it away cheap before I graduate.',
+    }),
+    em.create(CommunityPost, {
+      authorId: students[3].id,
+      content: 'Cricket match this Sunday at the sports complex ground, 4pm. We have the kit booked through CampusLoop. Need two more players, drop a comment.',
+    }),
+    em.create(CommunityPost, {
+      authorId: students[8].id,
+      content: 'Lost and found tip: I left my water bottle in the cafeteria last week and got it back through the Lost & Found desk within a day. This app actually works.',
+    }),
+  ]);
+  const comments = await em.save(PostComment, [
+    em.create(PostComment, { postId: posts[1].id, authorId: students[2].id, content: 'I have the 4th edition, will bring it to the library tomorrow.' }),
+    em.create(PostComment, { postId: posts[1].id, authorId: students[5].id, content: 'Count me in for the study room tonight.' }),
+    em.create(PostComment, { postId: posts[3].id, authorId: students[9].id, content: 'I am in, played last week too.' }),
+    em.create(PostComment, { postId: posts[0].id, authorId: students[0].id, content: 'Thank you, this helps a lot during exams.' }),
+    em.create(PostComment, { postId: posts[3].id, authorId: students[3].id, content: `Great, thanks @${students[9].fullName}! I will bring the spare bat too.` }),
+  ]);
+  // a threaded reply (the post author thanks the first commenter, tagging them)
+  await em.save(PostComment, [
+    em.create(PostComment, {
+      postId: posts[1].id,
+      parentId: comments[0].id,
+      authorId: students[0].id,
+      content: `Lifesaver, thank you @${students[2].fullName}!`,
+    }),
+  ]);
+  await em.save(PostLike, [
+    em.create(PostLike, { postId: posts[0].id, userId: students[0].id }),
+    em.create(PostLike, { postId: posts[0].id, userId: students[1].id }),
+    em.create(PostLike, { postId: posts[0].id, userId: students[2].id }),
+    em.create(PostLike, { postId: posts[0].id, userId: students[3].id }),
+    em.create(PostLike, { postId: posts[1].id, userId: students[2].id }),
+    em.create(PostLike, { postId: posts[1].id, userId: students[5].id }),
+    em.create(PostLike, { postId: posts[3].id, userId: students[0].id }),
+  ]);
+
   console.log('Seed complete.');
-  console.log(`  ${departments.length} departments, ${users.length} users, ${savedAssets.length} assets, ${bookingRows.length} bookings, ${listings.length} lending listings, ${lostReports.length} lost reports`);
+  console.log(`  ${departments.length} departments, ${users.length} users, ${savedAssets.length} assets, ${bookingRows.length} bookings, ${listings.length} lending listings, ${lostReports.length} lost reports, ${posts.length} community posts`);
   console.log('Logins (password for all: Password123!)');
   console.log('  student  aftab@szabist.edu.pk / javeria@szabist.edu.pk / laiba@szabist.edu.pk (+ 9 more)');
   console.log('  staff    sara.malik@szabist.pk / imran.farooq@szabist.pk / nadia.hussain@szabist.pk');

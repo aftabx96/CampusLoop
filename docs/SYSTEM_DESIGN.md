@@ -25,6 +25,12 @@ erDiagram
     USER ||--o| STUDY_PROFILE : "has"
     USER ||--o{ STUDY_MATCH : "participates"
     USER ||--o{ NOTIFICATION : "receives"
+    USER ||--o{ COMMUNITY_POST : "authors"
+    COMMUNITY_POST ||--o{ POST_COMMENT : "has"
+    COMMUNITY_POST ||--o{ POST_LIKE : "receives"
+    POST_COMMENT ||--o{ POST_COMMENT : "threaded reply"
+    USER ||--o{ POST_COMMENT : "writes"
+    USER ||--o{ POST_LIKE : "likes"
 
     DEPARTMENT { uuid id PK  string name  string faculty  string building }
     USER { uuid id PK  string email  string passwordHash  enum role  uuid departmentId FK  float reputationScore  bool lendingEligible }
@@ -38,6 +44,9 @@ erDiagram
     STUDY_PROFILE { uuid id PK  uuid userId FK  array modules  array availableSlots  enum studyStyle }
     STUDY_MATCH { uuid id PK  uuid userAId FK  uuid userBId FK  float compatibilityScore  enum status  array acceptedBy }
     NOTIFICATION { uuid id PK  uuid userId  string type  string title  bool read  jsonb data }
+    COMMUNITY_POST { uuid id PK  uuid authorId FK  text content  string imageUrl  bool isAnnouncement  bool pinned  bool hidden }
+    POST_COMMENT { uuid id PK  uuid postId FK  uuid parentId FK  uuid authorId FK  text content }
+    POST_LIKE { uuid id PK  uuid postId FK  uuid userId FK }
 ```
 
 ### Polymorphic asset modelling
@@ -62,6 +71,8 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 | POST | /auth/refresh | public | Rotate token pair |
 | POST | /auth/logout | any | Revoke refresh token |
 | GET | /users/me | any | Own profile |
+| PATCH | /users/me | any | Edit own profile (name, ID number) |
+| POST | /users/me/password | any | Change own password (verifies current) |
 | GET | /users | ADMIN | List users |
 | PATCH | /users/:id/role | ADMIN | Change role |
 | GET | /departments | public | List departments |
@@ -101,19 +112,32 @@ Swagger auto-generates the authoritative, always-accurate contract at **`/api`**
 | POST | /ai/smart-search | any (authenticated) | AI Feature 1 (proxied) |
 | POST | /ai/chat | any, incl. anonymous | Help chatbot - optional-JWT guard, role-aware when logged in |
 | GET | /analytics/* | ADMIN | overview, utilisation, demand, turnaround, lending, anomaly-report |
-| GET | /notifications · PATCH :id/read · read-all | any | In-app notifications |
+| GET | /notifications · PATCH :id/read · read-all | any | In-app notifications (click deep-links to source page) |
+| GET | /community/posts | any | Community feed (announcements pinned; hidden posts admin-only) |
+| GET | /community/people | any | People directory for @mention autocomplete |
+| POST | /community/posts | any | Create a post (optional photo); notifies @mentioned users |
+| POST | /community/announce | STAFF, ADMIN | Pinned announcement + notify every student |
+| DELETE | /community/posts/:id | author or ADMIN | Delete a post |
+| PATCH | /community/posts/:id/hide | ADMIN | Hide/unhide from the student feed |
+| POST | /community/posts/:id/like | any | Toggle like (notifies the post author) |
+| GET · POST | /community/posts/:id/comments | any | List / add comments; `parentId` makes it a threaded reply |
+| DELETE | /community/comments/:id | author or ADMIN | Delete a comment (and its replies) |
 
 **WebSocket events** (Socket.io, JWT handshake; rooms `user:<id>`, `role:<role>`, `dept:<id>`):
 `notification`, `booking:pending`, `inspection:pending`, `lostfound:new-report`, `anomaly-report`.
+Announcements and the social events (`like`, `comment`, `reply`, `mention`) reuse the persisted
+`notification` event, delivered to the target user's room in real time.
 
 ## 3. React Component Tree (role visibility)
 
 ```
 App (theme, socket lifecycle)
 ├── Aurora (ambient background)          - all
-├── NavBar (role-aware links, bell, theme) - all
+├── NavBar (role-aware links, bell, theme, avatar → account menu) - all
 ├── Routes (no AnimatePresence wrapper - see note below)
-│   ├── / Landing · /about About · /login · /register        - public
+│   ├── PublicOnly (redirect → /app if already signed in)
+│   │   └── / Landing · /login · /register                   - public
+│   ├── /about About                                         - public
 │   └── Protected (redirect → /login)
 │       ├── /app        RoleHome → Discover (AI search)      - STUDENT
 │       ├── /app/catalogue  Catalogue (+AddAssetModal ▸ STAFF/ADMIN)
@@ -122,6 +146,8 @@ App (theme, socket lifecycle)
 │       ├── /app/lending    Lending (tabs, Rate/Add modals)  - STUDENT
 │       ├── /app/lost-found LostFound (AI-matches tab ▸ OFFICER/ADMIN)
 │       ├── /app/study      StudyGroups (profile, AI suggest)- STUDENT
+│       ├── /app/community  Community (feed, announce ▸ STAFF/ADMIN, moderate ▸ ADMIN) - all
+│       ├── /app/profile    Profile (edit name/ID, change password)  - all
 │       ├── /app/manage     Manage (approvals + InspectionModal) - STAFF/ADMIN
 │       ├── /app/admin      AdminDashboard (4 chart types + anomaly) - ADMIN
 │       └── /app/users      UsersAdmin (role editor)         - ADMIN

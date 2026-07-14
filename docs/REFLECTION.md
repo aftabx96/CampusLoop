@@ -41,6 +41,9 @@ graceful degradation, and a React frontend with a distinct "liquid glass" visual
 - A lost and found workflow with AI-assisted match suggestions for officers.
 - A study-group matcher that proposes compatible partners and only exchanges contact details once
   both students accept.
+- A campus community feed where any signed-in user can post, like and comment; staff and admins can
+  broadcast pinned super-announcements that notify every student in real time, and admins moderate
+  the feed by deleting or hiding posts and comments.
 - An admin analytics dashboard with four distinct chart types (utilisation, demand ranking,
   approval turnaround, lending volume) plus a bonus weekly AI utilisation-anomaly report.
 - All three mandatory AI features (smart search, condition assessment, study matching) and the

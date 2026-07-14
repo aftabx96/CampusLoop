@@ -7,7 +7,8 @@
 
 CampusLoop turns idle university assets - lab instruments, study rooms, AV gear, textbooks,
 bicycles - into a trusted internal marketplace with concurrent-safe booking, peer lending,
-lost & found, and four AI features behind a NestJS proxy.
+lost & found, a campus community feed with staff announcements, and four AI features behind a
+NestJS proxy.
 
 ## Stack
 
@@ -35,8 +36,8 @@ copy .env.example .env          # fill in DB_HOST/DB_USER/DB_PASSWORD/DB_NAME fr
 # 3. install, migrate, seed
 npm install
 npm run migration:run           # runs cleanly from scratch against Neon
-npm run seed                    # 9 departments, 17 users, 31 assets (with photos), 8-week
-                                 # booking history, lending activity, lost & found, study profiles
+npm run seed                    # 9 departments, 17 users, 31 assets (with photos), 8-week booking
+                                 # history, lending, lost & found, study profiles, community feed
 
 # 4. run the API
 npm run start:dev               # http://localhost:3000, Swagger at /api
@@ -96,6 +97,18 @@ Sign up, copy the key into `AI_API_KEY=`, restart the backend - done. `AI_MODEL`
 
 ## Other platform features
 
+- **Community feed** - a campus-wide feed where any signed-in user posts updates (with optional
+  photo), likes, comments and **threaded replies**. Posts and comments support **@mentions** with
+  live autocomplete; a mention inserts the person's canonical name and notifies them. Staff/admin can
+  post a **super announcement**: a pinned post that also notifies every student. Admins moderate the
+  feed - delete any post or comment, and hide/unhide a post from the student view (`/community`).
+- **Social notifications** - the post author is notified when someone likes or comments on their
+  post, a comment author when someone replies, and any user when they are @mentioned. Each of these
+  (plus bookings, loans, lost-and-found, study matches and announcements) is a **clickable**
+  notification that deep-links to the relevant page and marks itself read on the way.
+- **User profile** - the navbar avatar opens an account menu; `/app/profile` lets any user edit
+  their name and ID number and change their password (`PATCH /users/me`, `POST /users/me/password`).
+  Email, role and department stay fixed so the profile never desyncs from the JWT claims.
 - **PKR pricing** - asset values are shown in PKR (`Rs 1,050,000` style formatting); bookings for
   assets at or above `HIGH_VALUE_THRESHOLD` (default Rs 100,000) require manager approval.
 - **Product photos** - every seeded asset and lending listing has a real photo; staff/admin can
@@ -125,8 +138,8 @@ CampusLoop/
 ├── backend/
 │   ├── src/entities/         # TypeORM entities (polymorphic Asset, Booking, …)
 │   ├── src/migrations/       # runs cleanly from scratch (incl. FTS trigger, exclusion constraint)
-│   ├── src/modules/          # auth, users, departments, assets, bookings, lending,
-│   │                         # lostfound, study, analytics, ai (LLM proxy), notifications (WS)
+│   ├── src/modules/          # auth, users, departments, assets, bookings, lending, lostfound,
+│   │                         # study, community, analytics, ai (LLM proxy), notifications (WS)
 │   ├── src/seed/seed.ts      # demo data
 │   └── test/                 # Jest + Supertest role-guard suites
 ├── frontend/

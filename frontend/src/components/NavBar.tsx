@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bell, Boxes, CalendarCheck, GraduationCap, HandHeart, PieChart,
-  LayoutDashboard, LogOut, Moon, Search, SearchX, Sun, Users,
+  Bell, Boxes, CalendarCheck, GraduationCap, HandHeart, MessagesSquare, PieChart,
+  LayoutDashboard, LogOut, Moon, Search, SearchX, Sun, UserCog, Users,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../stores/auth';
 import { useNotifications } from '../stores/notifications';
 import { useUi } from '../stores/ui';
@@ -17,32 +17,63 @@ const linksByRole: Record<string, Array<{ to: string; label: string; icon: JSX.E
     { to: '/app/lending', label: 'Peer Lending', icon: <HandHeart size={16} /> },
     { to: '/app/lost-found', label: 'Lost & Found', icon: <SearchX size={16} /> },
     { to: '/app/study', label: 'Study Groups', icon: <GraduationCap size={16} /> },
+    { to: '/app/community', label: 'Community', icon: <MessagesSquare size={16} /> },
   ],
   STAFF: [
     { to: '/app/manage', label: 'Manage', icon: <LayoutDashboard size={16} /> },
     { to: '/app/catalogue', label: 'Catalogue', icon: <Boxes size={16} /> },
     { to: '/app/bookings', label: 'Bookings', icon: <CalendarCheck size={16} /> },
     { to: '/app/lost-found', label: 'Lost & Found', icon: <SearchX size={16} /> },
+    { to: '/app/community', label: 'Community', icon: <MessagesSquare size={16} /> },
   ],
   LOST_FOUND_OFFICER: [
     { to: '/app/lost-found', label: 'Lost & Found', icon: <SearchX size={16} /> },
     { to: '/app/catalogue', label: 'Catalogue', icon: <Boxes size={16} /> },
+    { to: '/app/community', label: 'Community', icon: <MessagesSquare size={16} /> },
   ],
   ADMIN: [
     { to: '/app/admin', label: 'Analytics', icon: <PieChart size={16} /> },
     { to: '/app/catalogue', label: 'Catalogue', icon: <Boxes size={16} /> },
     { to: '/app/manage', label: 'Approvals', icon: <LayoutDashboard size={16} /> },
+    { to: '/app/community', label: 'Community', icon: <MessagesSquare size={16} /> },
     { to: '/app/users', label: 'Users', icon: <Users size={16} /> },
   ],
 };
+
+/** Where a notification points when tapped, keyed by its `type`. */
+function routeForNotification(type: string, role?: string): string {
+  switch (type) {
+    case 'booking': return '/app/bookings';
+    case 'loan':
+    case 'loan-overdue': return '/app/lending';
+    case 'study-match': return '/app/study';
+    case 'lostfound': return '/app/lost-found';
+    case 'announcement':
+    case 'like':
+    case 'comment':
+    case 'reply':
+    case 'mention': return '/app/community';
+    case 'anomaly-report': return '/app/admin';
+    default: return role === 'STUDENT' ? '/app' : '/app/community';
+  }
+}
 
 export function NavBar() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useUi();
   const { items, load, markRead, markAllRead } = useNotifications();
   const [bellOpen, setBellOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const unread = items.filter((n) => !n.read).length;
+
+  const openNotification = (n: (typeof items)[number]) => {
+    markRead(n.id);
+    setBellOpen(false);
+    navigate(routeForNotification(n.type, user?.role));
+  };
 
   useEffect(() => {
     if (user) load().catch(() => {});
@@ -51,6 +82,7 @@ export function NavBar() {
   useEffect(() => {
     const close = (e: MouseEvent) => {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
     };
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
@@ -75,14 +107,14 @@ export function NavBar() {
           <strong style={{ fontFamily: 'var(--font-display)', fontSize: 17 }}>CampusLoop</strong>
         </NavLink>
 
-        <div style={{ display: 'flex', gap: 2, flex: 1, overflowX: 'auto', scrollbarWidth: 'none' }} className="nav-links">
+        <div style={{ display: 'flex', gap: 2, flex: 1, minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none', paddingRight: 6 }} className="nav-links">
           {links.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               end={l.to === '/app'}
               style={({ isActive }) => ({
-                display: 'flex', alignItems: 'center', gap: 7, padding: '9px 14px', borderRadius: 999,
+                display: 'flex', alignItems: 'center', gap: 6, padding: '9px 11px', borderRadius: 999,
                 fontSize: 13.5, fontWeight: 600, whiteSpace: 'nowrap',
                 color: isActive ? '#fff' : 'var(--ink-2)',
                 background: isActive ? 'linear-gradient(135deg, var(--accent), var(--accent-2))' : 'transparent',
@@ -138,9 +170,9 @@ export function NavBar() {
                   {items.slice(0, 20).map((n) => (
                     <button
                       key={n.id}
-                      onClick={() => markRead(n.id)}
+                      onClick={() => openNotification(n)}
                       style={{
-                        display: 'block', width: '100%', textAlign: 'left', background: n.read ? 'transparent' : 'color-mix(in srgb, var(--accent) 8%, transparent)',
+                        display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer', background: n.read ? 'transparent' : 'color-mix(in srgb, var(--accent) 8%, transparent)',
                         border: 'none', borderRadius: 12, padding: '10px 12px', marginBottom: 4, color: 'var(--ink)',
                       }}
                     >
@@ -155,23 +187,60 @@ export function NavBar() {
         )}
 
         {user ? (
-          <button
-            className="btn btn-glass btn-sm"
-            onClick={() => {
-              logout();
-              // Hard navigation on purpose: a protected route's exit animation
-              // (AnimatePresence mode="wait") stays mounted and reactive during
-              // its own transition, so it notices user becoming null and fires
-              // its own redirect to /login, racing a plain navigate('/') here.
-              // Reloading to '/' sidesteps that race entirely and also cleanly
-              // tears down the WebSocket connection.
-              window.location.href = '/';
-            }}
-            aria-label="Log out"
-            style={{ gap: 6 }}
-          >
-            <LogOut size={15} /> <span className="nav-label">{user.fullName.split(' ')[0]}</span>
-          </button>
+          <div ref={profileRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setProfileOpen((o) => !o)}
+              aria-label="Account menu"
+              aria-expanded={profileOpen}
+              title={user.fullName}
+              style={{
+                width: 38, height: 38, borderRadius: '50%', padding: 0, flexShrink: 0, cursor: 'pointer',
+                border: '2px solid color-mix(in srgb, var(--accent) 40%, transparent)',
+                display: 'grid', placeItems: 'center', color: '#fff', fontSize: 13.5, fontWeight: 700,
+                background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
+              }}
+            >
+              {avatarInitials(user.fullName)}
+            </button>
+            <AnimatePresence>
+              {profileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+                  className="glass-strong"
+                  style={{ position: 'absolute', right: 0, top: 48, width: 250, padding: 10, borderRadius: 20 }}
+                >
+                  <div style={{ padding: '8px 10px 12px', borderBottom: '1px solid var(--glass-border)', marginBottom: 6 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700 }}>{user.fullName}</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
+                  </div>
+                  <button
+                    onClick={() => { setProfileOpen(false); navigate('/app/profile'); }}
+                    style={menuItemStyle}
+                  >
+                    <UserCog size={16} /> Edit profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      logout();
+                      // Hard navigation on purpose: a protected route's exit animation
+                      // (AnimatePresence mode="wait") stays mounted and reactive during
+                      // its own transition, so it notices user becoming null and fires
+                      // its own redirect to /login, racing a plain navigate('/') here.
+                      // Reloading to '/' sidesteps that race entirely and also cleanly
+                      // tears down the WebSocket connection.
+                      window.location.href = '/';
+                    }}
+                    style={{ ...menuItemStyle, color: 'var(--danger)' }}
+                  >
+                    <LogOut size={16} /> Log out
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         ) : (
           <NavLink to="/login" className="btn btn-primary btn-sm">Sign in</NavLink>
         )}
@@ -183,6 +252,15 @@ export function NavBar() {
     </motion.header>
   );
 }
+
+const menuItemStyle: CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+  background: 'transparent', border: 'none', borderRadius: 12, padding: '10px 12px',
+  fontSize: 13.5, fontWeight: 600, color: 'var(--ink)', cursor: 'pointer',
+};
+
+const avatarInitials = (name: string) =>
+  name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
 
 export function Logo({ size = 26 }: { size?: number }) {
   return (

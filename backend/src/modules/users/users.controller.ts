@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,7 +23,25 @@ export class UsersController {
   @Get('me')
   @ApiOperation({ summary: 'Current user profile' })
   me(@CurrentUser() user: JwtPayload) {
-    return this.usersService.findOne(user.sub);
+    return this.usersService.getProfile(user.sub);
+  }
+
+  @Patch('me')
+  @ApiOperation({ summary: 'Edit my own profile (name, ID number)' })
+  updateProfile(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: { fullName?: string; studentNumber?: string },
+  ) {
+    return this.usersService.updateProfile(user.sub, dto);
+  }
+
+  @Post('me/password')
+  @ApiOperation({ summary: 'Change my own password' })
+  changePassword(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: { currentPassword: string; newPassword: string },
+  ) {
+    return this.usersService.changePassword(user.sub, dto.currentPassword, dto.newPassword);
   }
 
   @Get()
