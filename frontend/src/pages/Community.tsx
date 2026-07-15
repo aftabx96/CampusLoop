@@ -3,6 +3,7 @@ import {
   CornerDownRight, Heart, ImagePlus, Megaphone, MessageCircle, Pin, Send, Trash2, X,
 } from 'lucide-react';
 import { FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { EmptyState, Page, Spinner, fadeUp, stagger } from '../components/ui';
 import { api, errMsg } from '../lib/api';
 import { useAuth } from '../stores/auth';
@@ -115,6 +116,12 @@ function Avatar({ name, small }: { name: string; small?: boolean }) {
  * Textarea with @mention autocomplete. Detects the @token being typed just
  * before the caret, suggests matching people, and inserts the canonical full
  * name on select so the backend can match `@${fullName}` reliably.
+ *
+ * The suggestion list renders in a portal with fixed positioning. An absolutely
+ * positioned menu was clipped to nothing inside the comment thread, which
+ * animates its height behind `overflow: hidden`; a portal escapes every
+ * ancestor's clipping and also lets the list flip above the field when there is
+ * no room below it.
  */
 function MentionField({
   value, onChange, people, placeholder, rows = 1, onEnterSubmit,
@@ -127,7 +134,9 @@ function MentionField({
   onEnterSubmit?: () => void;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [menu, setMenu] = useState<{ query: string; atPos: number; caret: number } | null>(null);
+  const [pos, setPos] = useState<{ left: number; top: number; width: number; maxH: number } | null>(null);
 
   const detect = (v: string, caret: number) => {
     const upto = v.slice(0, caret);
@@ -146,8 +155,7 @@ function MentionField({
     const before = value.slice(0, menu.atPos);
     const after = value.slice(menu.caret);
     const insert = `@${p.fullName} `;
-    const next = before + insert + after;
-    onChange(next);
+    onChange(before + insert + after);
     setMenu(null);
     const caret = (before + insert).length;
     requestAnimationFrame(() => {
@@ -158,8 +166,49 @@ function MentionField({
 
   const q = (menu?.query ?? '').trim().toLowerCase();
   const suggestions = menu
-    ? people.filter((p) => !q || p.fullName.toLowerCase().includes(q)).slice(0, 6)
+    ? people.filter((p) => !q || p.fullName.toLowerCase().includes(q)).slice(0, 25)
     : [];
+  const open = !!menu && suggestions.length > 0;
+
+  // Track the field's viewport position so the fixed menu follows it.
+  useEffect(() => {
+    if (!open) { setPos(null); return; }
+    const compute = () => {
+      const el = ref.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - r.bottom - 12;
+      const spaceAbove = r.top - 12;
+      const below = spaceBelow >= 170 || spaceBelow >= spaceAbove;
+      const maxH = Math.min(280, Math.max(120, below ? spaceBelow : spaceAbove));
+      setPos({
+        left: r.left,
+        top: below ? r.bottom + 6 : r.top - maxH - 6,
+        width: Math.max(240, Math.min(340, r.width)),
+        maxH,
+      });
+    };
+    compute();
+    window.addEventListener('scroll', compute, true);
+    window.addEventListener('resize', compute);
+    return () => {
+      window.removeEventListener('scroll', compute, true);
+      window.removeEventListener('resize', compute);
+    };
+  }, [open]);
+
+  // Close on an outside click. Deliberately not onBlur: dragging the menu's own
+  // scrollbar blurs the textarea, which would otherwise close the list mid-scroll.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (ref.current?.contains(t) || menuRef.current?.contains(t)) return;
+      setMenu(null);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
 
   return (
     <div style={{ position: 'relative', flex: 1 }}>
@@ -171,25 +220,27 @@ function MentionField({
         placeholder={placeholder}
         rows={rows}
         onKeyDown={(e) => {
-          if (menu && suggestions.length && (e.key === 'Enter' || e.key === 'Tab')) {
+          if (open && (e.key === 'Enter' || e.key === 'Tab')) {
             e.preventDefault();
             pick(suggestions[0]);
             return;
           }
+          if (e.key === 'Escape' && menu) { setMenu(null); return; }
           if (onEnterSubmit && e.key === 'Enter' && !e.shiftKey && !menu) {
             e.preventDefault();
             onEnterSubmit();
           }
         }}
-        onBlur={() => setTimeout(() => setMenu(null), 120)}
         style={{ resize: rows > 1 ? 'vertical' : 'none', minHeight: rows > 1 ? 70 : 44 }}
       />
-      {menu && suggestions.length > 0 && (
+      {open && pos && createPortal(
         <div
+          ref={menuRef}
           className="glass-strong"
           style={{
-            position: 'absolute', top: '100%', left: 0, marginTop: 6, width: 260, zIndex: 60,
-            padding: 6, borderRadius: 14, maxHeight: 240, overflowY: 'auto',
+            position: 'fixed', left: pos.left, top: pos.top, width: pos.width,
+            maxHeight: pos.maxH, overflowY: 'auto', zIndex: 2000,
+            padding: 6, borderRadius: 14,
             boxShadow: '0 16px 40px rgba(8,10,20,0.28)',
           }}
         >
@@ -213,7 +264,8 @@ function MentionField({
               </div>
             </button>
           ))}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

@@ -12,13 +12,13 @@ NestJS proxy.
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Frontend | React 18 + TypeScript, Vite, React Router v6, Axios, Zustand, framer-motion, Recharts, socket.io-client |
-| Backend | NestJS + TypeScript, TypeORM (migrations), Passport-JWT (access+refresh), Socket.io gateway, @nestjs/schedule crons |
-| Database | PostgreSQL 15 on [Neon](https://neon.tech) (serverless, free tier) - full-text search, `btree_gist` exclusion constraint against double-bookings |
-| AI | Anthropic Claude **or** OpenAI via backend proxy - no keys in the frontend, graceful fallbacks everywhere |
-| Docs / tests | Swagger auto-generated at `/api` · Jest + Supertest role-guard integration tests |
+| Layer        | Tech                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Frontend     | React 18 + TypeScript, Vite, React Router v6, Axios, Zustand, framer-motion, Recharts, socket.io-client                                          |
+| Backend      | NestJS + TypeScript, TypeORM (migrations), Passport-JWT (access+refresh), Socket.io gateway, @nestjs/schedule crons                              |
+| Database     | PostgreSQL 15 on [Neon](https://neon.tech) (serverless, free tier) - full-text search, `btree_gist` exclusion constraint against double-bookings |
+| AI           | Anthropic Claude **or** OpenAI via backend proxy - no keys in the frontend, graceful fallbacks everywhere                                        |
+| Docs / tests | Swagger auto-generated at `/api` · Jest + Supertest role-guard integration tests                                                                 |
 
 ## Quick start
 
@@ -50,12 +50,12 @@ npm run dev                     # http://localhost:5173 (proxies API + WebSocket
 
 ### Demo logins (password: `Password123!`)
 
-| Role | Email |
-|---|---|
-| Student | `aftab@szabist.edu.pk` · `javeria@szabist.edu.pk` · `laiba@szabist.edu.pk` (+ 9 more) |
-| Staff / Lab Manager | `sara.malik@szabist.pk` · `imran.farooq@szabist.pk` · `nadia.hussain@szabist.pk` |
-| Lost & Found Officer | `officer@szabist.pk` |
-| Admin | `admin@szabist.pk` |
+| Role                 | Email                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| Student              | `aftab@szabist.edu.pk` · `javeria@szabist.edu.pk` · `laiba@szabist.edu.pk` (+ 9 more) |
+| Staff / Lab Manager  | `sara.malik@szabist.pk` · `imran.farooq@szabist.pk` · `nadia.hussain@szabist.pk`      |
+| Lost & Found Officer | `officer@szabist.pk`                                                                  |
+| Admin                | `admin@szabist.pk`                                                                    |
 
 > **Admin accounts are never self-registered.** The public registration form only offers Student,
 > Staff and Lost & Found Officer; the backend rejects `role: ADMIN` on `POST /auth/register` with a
@@ -85,36 +85,42 @@ feature degrades gracefully - the UI labels non-AI results.
 
 **Free API keys** (no credit card needed):
 
-| Provider | Get a key | `.env` |
-|---|---|---|
-| Google Gemini (recommended - free tier incl. vision) | <https://aistudio.google.com/apikey> | `AI_PROVIDER=gemini` |
-| Groq (free tier, very fast, vision) | <https://console.groq.com/keys> | `AI_PROVIDER=groq` |
-| OpenRouter (`:free` models) | <https://openrouter.ai/settings/keys> | `AI_PROVIDER=openrouter` |
-| Anthropic / OpenAI (paid) | console.anthropic.com / platform.openai.com | `AI_PROVIDER=anthropic\|openai` |
+| Provider                                             | Get a key                                   | `.env`                          |
+| ---------------------------------------------------- | ------------------------------------------- | ------------------------------- |
+| Google Gemini (recommended - free tier incl. vision) | <https://aistudio.google.com/apikey>        | `AI_PROVIDER=gemini`            |
+| Groq (free tier, very fast, vision)                  | <https://console.groq.com/keys>             | `AI_PROVIDER=groq`              |
+| OpenRouter (`:free` models)                          | <https://openrouter.ai/settings/keys>       | `AI_PROVIDER=openrouter`        |
+| Anthropic / OpenAI (paid)                            | console.anthropic.com / platform.openai.com | `AI_PROVIDER=anthropic\|openai` |
 
 Sign up, copy the key into `AI_API_KEY=`, restart the backend - done. `AI_MODEL` is optional
 (sensible per-provider defaults are built in).
 
 ## Other platform features
 
-- **Community feed** - a campus-wide feed where any signed-in user posts updates (with optional
+* **Community feed** - a campus-wide feed where any signed-in user posts updates (with optional
   photo), likes, comments and **threaded replies**. Posts and comments support **@mentions** with
   live autocomplete; a mention inserts the person's canonical name and notifies them. Staff/admin can
   post a **super announcement**: a pinned post that also notifies every student. Admins moderate the
   feed - delete any post or comment, and hide/unhide a post from the student view (`/community`).
-- **Social notifications** - the post author is notified when someone likes or comments on their
+
+* **Social notifications** - the post author is notified when someone likes or comments on their
   post, a comment author when someone replies, and any user when they are @mentioned. Each of these
   (plus bookings, loans, lost-and-found, study matches and announcements) is a **clickable**
   notification that deep-links to the relevant page and marks itself read on the way.
-- **User profile** - the navbar avatar opens an account menu; `/app/profile` lets any user edit
+
+* **User profile** - the navbar avatar opens an account menu; `/app/profile` lets any user edit
   their name and ID number and change their password (`PATCH /users/me`, `POST /users/me/password`).
   Email, role and department stay fixed so the profile never desyncs from the JWT claims.
-- **PKR pricing** - asset values are shown in PKR (`Rs 1,050,000` style formatting); bookings for
+
+* **PKR pricing** - asset values are shown in PKR (`Rs 1,050,000` style formatting); bookings for
   assets at or above `HIGH_VALUE_THRESHOLD` (default Rs 100,000) require manager approval.
-- **Product photos** - every seeded asset and lending listing has a real photo; staff/admin can
+
+* **Product photos** - every seeded asset and lending listing has a real photo; staff/admin can
   replace an asset's photo any time from its detail page (`PATCH /assets/:id`, multipart).
-- **Password visibility toggle** on Login and Register (shared `PasswordInput` component).
-- **Centered, responsive card grids** - flexbox-based wrapping (not CSS Grid `auto-fill`) so a
+
+* **Password visibility toggle** on Login and Register (shared `PasswordInput` component).
+
+* **Centered, responsive card grids** - flexbox-based wrapping (not CSS Grid `auto-fill`) so a
   partially-filled last row of cards centers itself instead of hugging the left edge.
 
 ## Tests & docs
@@ -125,11 +131,15 @@ npm test            # 29 Jest + Supertest tests over role-protected routes
 npm run test:cov    # coverage (controllers)
 ```
 
-- Swagger: <http://localhost:3000/api>
-- System design: [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)
-- AI integration report: [docs/AI_INTEGRATION_REPORT.md](docs/AI_INTEGRATION_REPORT.md)
-- Project reflection (benefits, scope, decisions): [docs/REFLECTION.md](docs/REFLECTION.md)
-- Demo script + architectural-decision outline: [docs/REFLECTION_GUIDE.md](docs/REFLECTION_GUIDE.md)
+* Swagger: <http://localhost:3000/api>
+
+* System design: [docs/SYSTEM\_DESIGN.md](docs/SYSTEM_DESIGN.md)
+
+* AI integration report: [docs/AI\_INTEGRATION\_REPORT.md](docs/AI_INTEGRATION_REPORT.md)
+
+* Project reflection (benefits, scope, decisions): [docs/REFLECTION.md](docs/REFLECTION.md)
+
+  <br />
 
 ## Project structure
 

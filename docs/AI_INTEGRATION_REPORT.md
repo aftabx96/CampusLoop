@@ -3,8 +3,7 @@
 > **Team:** Unemployed Developers · Web Technologies · Instructor: Mustafa Hassan
 >
 > Note on integrity (spec §8): prompt templates below are the ones actually implemented in
-> `backend/src/modules/ai/prompts.ts`. The team should review each template, understand it fully,
-> and be ready to defend the iterations at viva.
+> `backend/src/modules/ai/prompts.ts`. 
 
 ## 1. Full Prompt Templates
 
