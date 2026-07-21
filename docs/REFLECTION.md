@@ -7,8 +7,7 @@
 
 ## 1. About the Project
 
-CampusLoop is a full-stack, AI-assisted resource-sharing platform built for the fictional
-Meridian University as the course project for Web Technologies. It models a real problem many
+CampusLoop is a full-stack, AI-assisted resource-sharing platform as the course project for Web Technologies. It models a real problem many
 universities face: expensive equipment, rooms and everyday items sit idle in one department while
 students in another department queue for the same category of resource, and the whole process is
 coordinated by email. CampusLoop replaces that with a single, role-aware web application: a
